@@ -54,8 +54,6 @@ function tickWorld() {
             }
         }
     }
-    console.log('changed', changed);
-    console.log('world', world);
     return [world, changed]
 }
 
