@@ -1,0 +1,25 @@
+{
+  "name": "pixel-mage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "test": "",
+    "build": "rollup --config"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ezwal/pixel-magic.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ezwal/pixel-magic/issues"
+  },
+  "homepage": "https://github.com/ezwal/pixel-magic#readme",
+  "devDependencies": {
+    "rollup": "^2.34.2",
+    "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-serve": "^1.1.0"
+  }
+}
