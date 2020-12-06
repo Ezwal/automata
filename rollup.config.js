@@ -12,12 +12,13 @@ export default {
         serve({
             open: true,
             verbose: true,
-            contentBase: ['dist'],
+            contentBase: ['dist', 'src'],
             host: 'localhost',
             port: 8080,
         }),
         livereload({
-            watch: 'dist',
+            watch: 'src',
+            verbose: 'true',
         }),
     ]
 }
