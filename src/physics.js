@@ -7,7 +7,7 @@ const materia = Object.freeze({
 const materiaColor = Object.freeze({
     [materia.air]: [255, 255, 255],
     [materia.ground]: [0, 0, 0],
-    [materia.water]: [0, 0, 255],
+    [materia.water]: [0, 15, 255],
 })
 
 const is = (id, mat) => world[id] === mat
@@ -20,11 +20,12 @@ function initWorld(w, h) {
     width = w
     height = h
     for (let i = 0; i < w * h; i++) {
-        world[i] = materia.air
-        if (i === 125) {
-            world[i] = materia.water
+        world.push(materia.air)
+        if (i == 125 || i == 125 + width || i == 125 + 2 *width) {
+            world.push(materia.water)
         }
     }
+    return world
 }
 
 function waterPhysics(center) {
@@ -45,6 +46,7 @@ function waterPhysics(center) {
     return changed
 }
 
+let i = 0
 function tickWorld() {
     let changed = []
     for (let i = 0; i < world.length; i ++) {
@@ -53,6 +55,12 @@ function tickWorld() {
                 changed = changed.concat(waterPhysics(i))
             }
         }
+    }
+    // https://blog.usejournal.com/structurae-data-structures-for-high-performance-javascript-9b7da4c73f8
+    if (i < 100) {
+        world[125] = materia.water
+        changed.push(125)
+        i++
     }
     return [world, changed]
 }

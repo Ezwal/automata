@@ -4,7 +4,7 @@ const canvas = document.getElementById('mainCanvas')
 const ctx = canvas.getContext('2d')
 ctx.imageSmoothingEnabled = false
 
-// ctx.fillStyle = 'white'
+ctx.fillStyle = 'white'
 ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx.createImageData(canvas.width, canvas.height)
 
@@ -15,13 +15,13 @@ const offsetRgb = data => (offset, [r, g, b]) => {
     data[offset+2] = b
 }
 const getImageData = () => ctx.getImageData(0, 0, canvas.width, canvas.height)
+const imageData = getImageData()
+const paintData = offsetRgb(imageData.data)
 
 function paintPixels(pixels, world) {
-    const imageData = getImageData()
-    const paintData = offsetRgb(imageData.data)
-    pixels.forEach((pixelOffset) => {
-        const offset = pixelOffset * 4
-        paintData(offset, materiaColor[world[pixelOffset]])
+    pixels.forEach(pixelOffset => {
+        paintData(pixelOffset * 4,
+                  materiaColor[world[pixelOffset]])
     })
 
     ctx.putImageData(imageData, 0, 0)
@@ -35,7 +35,7 @@ function loop() {
 function main() {
     initWorld(canvas.width, canvas.height)
     createjs.Ticker.addEventListener('tick', loop)
-    createjs.Ticker.framerate = 30
+    createjs.Ticker.framerate = 120
 }
 
 main()
