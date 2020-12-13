@@ -1,13 +1,15 @@
 const materia = Object.freeze({
     air: 0,
     ground: 1,
-    water: 2
+    water: 2,
+    sand: 3,
 })
 
 const materiaColor = Object.freeze({
     [materia.air]: [255, 255, 255],
     [materia.ground]: [0, 0, 0],
     [materia.water]: [0, 15, 255],
+    [materia.sand]: [244, 217, 14],
 })
 
 const is = (id, mat) => world[id] === mat
@@ -28,6 +30,24 @@ function initWorld(w, h) {
     return world
 }
 
+function sandPhysics(center) {
+    let changed = []
+    if (is(center + width, materia.air)) {
+        world[center + width] = materia.sand
+        world[center] = materia.air
+        changed.push(center, center+width)
+    } else if (is(center + width - 1, materia.air)) {
+        world[center + width - 1] = materia.sand
+        world[center] = materia.air
+        changed.push(center, center+width-1)
+    } else if (is(center + width + 1, materia.air)) {
+        world[center + width + 1] = materia.sand
+        world[center] = materia.air
+        changed.push(center, center+width+1)
+    }
+    return changed
+}
+
 function waterPhysics(center) {
     let changed = []
     if (is(center + width, materia.air)) {
@@ -42,6 +62,14 @@ function waterPhysics(center) {
         world[center + width + 1] = materia.water
         world[center] = materia.air
         changed.push(center, center+width+1)
+    } else if (is(center + width, materia.water) && is(center - 1, materia.air)) {
+        world[center-1] = materia.water
+        world[center] = materia.air
+        changed.push(center, center-1)
+    } else if (is(center + width, materia.water) && is(center + 1, materia.air)) {
+        world[center+1] = materia.water
+        world[center] = materia.air
+        changed.push(center, center+1)
     }
     return changed
 }
