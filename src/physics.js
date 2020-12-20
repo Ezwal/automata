@@ -1,3 +1,5 @@
+import { is, swap, down, left, right } from './world.js'
+
 const materia = Object.freeze({
     air: 0,
     ground: 1,
@@ -12,87 +14,37 @@ const materiaColor = Object.freeze({
     [materia.sand]: [244, 217, 14],
 })
 
-const is = (id, mat) => world[id] === mat
-
-let world = []
-let width
-let height
-
-function initWorld(w, h) {
-    width = w
-    height = h
-    for (let i = 0; i < w * h; i++) {
-        world.push(materia.air)
-        if (i == 125 || i == 125 + width || i == 125 + 2 *width) {
-            world.push(materia.water)
+function sandPhysics(center) {
+    for (let toCheck of [down(center), left(down(center)), right(down(center))]) {
+        if (is(toCheck, materia.air))  {
+            swap(toCheck, center)
+            return [toCheck, center]
         }
     }
-    return world
-}
-
-function sandPhysics(center) {
-    let changed = []
-    if (is(center + width, materia.air)) {
-        world[center + width] = materia.sand
-        world[center] = materia.air
-        changed.push(center, center+width)
-    } else if (is(center + width - 1, materia.air)) {
-        world[center + width - 1] = materia.sand
-        world[center] = materia.air
-        changed.push(center, center+width-1)
-    } else if (is(center + width + 1, materia.air)) {
-        world[center + width + 1] = materia.sand
-        world[center] = materia.air
-        changed.push(center, center+width+1)
-    }
-    return changed
+    return []
 }
 
 function waterPhysics(center) {
-    let changed = []
-    if (is(center + width, materia.air)) {
-        world[center + width] = materia.water
-        world[center] = materia.air
-        changed.push(center, center+width)
-    } else if (is(center + width - 1, materia.air)) {
-        world[center + width - 1] = materia.water
-        world[center] = materia.air
-        changed.push(center, center+width-1)
-    } else if (is(center + width + 1, materia.air)) {
-        world[center + width + 1] = materia.water
-        world[center] = materia.air
-        changed.push(center, center+width+1)
-    } else if (is(center + width, materia.water) && is(center - 1, materia.air)) {
-        world[center-1] = materia.water
-        world[center] = materia.air
-        changed.push(center, center-1)
-    } else if (is(center + width, materia.water) && is(center + 1, materia.air)) {
-        world[center+1] = materia.water
-        world[center] = materia.air
-        changed.push(center, center+1)
+    for (let toCheck of [down(center), left(down(center)), right(down(center))]) {
+        if (is(toCheck, materia.air))  {
+            swap(toCheck, center)
+            return [toCheck, center]
+        }
     }
-    return changed
-}
-
-let i = 0
-function tickWorld() {
-    let changed = []
-    for (let i = 0; i < world.length; i ++) {
-        if (!changed.includes(i)) {
-            if (is(i, materia.water)) {
-                changed = changed.concat(waterPhysics(i))
+    if (is(down(center), materia.water)) {
+        for (let toCheck of [left(center), right(center)]) {
+            if (is(toCheck, materia.air)) {
+                swap(toCheck, center)
+                return [toCheck, center]
             }
         }
     }
-    // https://blog.usejournal.com/structurae-data-structures-for-high-performance-javascript-9b7da4c73f8
-    if (i < 100) {
-        world[125] = materia.water
-        changed.push(125)
-        i++
-    }
-    return [world, changed]
+    return []
 }
 
-export {
-    initWorld, tickWorld, materiaColor
-}
+const materiaPhysics = Object.freeze({
+    [materia.water]: waterPhysics,
+    [materia.sand]: sandPhysics,
+})
+
+export { materiaPhysics, materiaColor }

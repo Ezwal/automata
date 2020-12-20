@@ -1,4 +1,5 @@
-import {initWorld, tickWorld, materiaColor} from './physics.js'
+import { materiaColor } from './physics.js'
+import * as World from './world.js'
 
 const canvas = document.getElementById('mainCanvas')
 const ctx = canvas.getContext('2d')
@@ -18,8 +19,9 @@ const getImageData = () => ctx.getImageData(0, 0, canvas.width, canvas.height)
 const imageData = getImageData()
 const paintData = offsetRgb(imageData.data)
 
-function paintPixels(pixels, world) {
-    pixels.forEach(pixelOffset => {
+function paintPixels(changedId) {
+    let world = World.get()
+    changedId.forEach(pixelOffset => {
         paintData(pixelOffset * 4,
                   materiaColor[world[pixelOffset]])
     })
@@ -28,14 +30,14 @@ function paintPixels(pixels, world) {
 }
 
 function loop() {
-    const [world, changed] = tickWorld()
-    paintPixels(changed, world)
+    const changedId = World.tick()
+    paintPixels(changedId)
 }
 
 function main() {
-    initWorld(canvas.width, canvas.height)
+    World.init(canvas.width, canvas.height)
     createjs.Ticker.addEventListener('tick', loop)
-    createjs.Ticker.framerate = 120
+    createjs.Ticker.framerate = 30
 }
 
 main()
