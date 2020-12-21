@@ -1,3 +1,4 @@
+import handleClick from './user.js'
 import { materiaColor } from './physics.js'
 import * as World from './world.js'
 
@@ -35,6 +36,7 @@ function loop() {
 }
 
 function main() {
+    handleClick()
     World.init(canvas.width, canvas.height)
     createjs.Ticker.addEventListener('tick', loop)
     createjs.Ticker.framerate = 30

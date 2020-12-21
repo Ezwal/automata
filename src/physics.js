@@ -1,4 +1,5 @@
-import { is, swap, down, left, right } from './world.js'
+import { is, at, swap, down, left, right } from './world.js'
+import { scramble } from './util.js'
 
 const materia = Object.freeze({
     air: 0,
@@ -14,28 +15,34 @@ const materiaColor = Object.freeze({
     [materia.sand]: [244, 217, 14],
 })
 
-function sandPhysics(center) {
-    for (let toCheck of [down(center), left(down(center)), right(down(center))]) {
-        if (is(toCheck, materia.air))  {
-            swap(toCheck, center)
-            return [toCheck, center]
+const materiaDensity = Object.freeze({
+    [materia.air]: 0,
+    [materia.ground]: 100,
+    [materia.water]: 50,
+    [materia.sand]: 60,
+})
+
+function gravity(center) {
+    const centerDensity = materiaDensity[at(center)]
+    const belowIndex = down(center)
+    for (let toCheck of [belowIndex, left(belowIndex), right(down(center))]) {
+        if (materiaDensity[at(toCheck)] < centerDensity) {
+            return swap(toCheck, center)
         }
     }
     return []
 }
 
 function waterPhysics(center) {
-    for (let toCheck of [down(center), left(down(center)), right(down(center))]) {
-        if (is(toCheck, materia.air))  {
-            swap(toCheck, center)
-            return [toCheck, center]
-        }
+    const belowIndex = down(center)
+    const falling = gravity(center)
+    if (falling.length !== 0) {
+        return falling
     }
-    if (is(down(center), materia.water)) {
+    if (is(belowIndex, materia.water)) {
         for (let toCheck of [left(center), right(center)]) {
             if (is(toCheck, materia.air)) {
-                swap(toCheck, center)
-                return [toCheck, center]
+                return swap(toCheck, center)
             }
         }
     }
@@ -44,7 +51,7 @@ function waterPhysics(center) {
 
 const materiaPhysics = Object.freeze({
     [materia.water]: waterPhysics,
-    [materia.sand]: sandPhysics,
+    [materia.sand]: gravity,
 })
 
 export { materiaPhysics, materiaColor }
