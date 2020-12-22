@@ -1,5 +1,5 @@
 import handleClick from './user.js'
-import { materiaColor } from './physics.js'
+import { props } from './materia.js'
 import * as World from './world.js'
 
 const canvas = document.getElementById('mainCanvas')
@@ -21,10 +21,9 @@ const imageData = getImageData()
 const paintData = offsetRgb(imageData.data)
 
 function paintPixels(changedId) {
-    let world = World.get()
     changedId.forEach(pixelOffset => {
         paintData(pixelOffset * 4,
-                  materiaColor[world[pixelOffset]])
+                  props[World.at(pixelOffset)].color)
     })
 
     ctx.putImageData(imageData, 0, 0)

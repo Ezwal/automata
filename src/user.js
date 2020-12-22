@@ -11,6 +11,7 @@ const materiaKeyCode = Object.freeze({
 function handleClick() {
     let painting = undefined
     let currentPaintingMateria = 2
+
     canvas.addEventListener('mousedown', e => {
         if (e.buttons === 1) {
             console.log('start painting', e.offsetX, e.offsetY)
@@ -29,6 +30,7 @@ function handleClick() {
             console.log('stopped painting');
         }
     })
+
     document.addEventListener('keydown', e => {
         if (materiaKeyCode[e.key]) {
             currentPaintingMateria = materiaKeyCode[e.key]

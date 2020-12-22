@@ -1,4 +1,4 @@
-import { materiaPhysics } from './physics.js'
+import { props } from './materia.js'
 
 let width = 0
 let height = 0
@@ -57,8 +57,9 @@ function tick() {
     let currentChange = []
     for (let i of lastTouched) {
         if (!currentChange.includes(i)) {
-            if (materiaPhysics[world[i]]) {
-                currentChange = currentChange.concat(materiaPhysics[world[i]](i))
+            const physic = props[at(i)].physic
+            if (physic) {
+                currentChange = currentChange.concat(physic(i))
             }
         }
     }
