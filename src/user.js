@@ -1,12 +1,13 @@
 import { paint, stopPainting } from './world.js'
+import { materia, props } from './materia.js'
 
 const canvas = document.getElementById('mainCanvas')
 
-const materiaKeyCode = Object.freeze({
-    'g': 1,
-    'w': 2,
-    's': 3,
-})
+const materiaKeyCode = Object.keys(props)
+                             .reduce((keyToMateria, el) => {
+                                 keyToMateria[props[el].key] = Number(el)
+                                 return keyToMateria
+                             }, {})
 
 function handleClick() {
     let painting = undefined
@@ -23,8 +24,8 @@ function handleClick() {
             paint(e.offsetX, e.offsetY, currentPaintingMateria)
         }
     })
-    canvas.addEventListener('mousedown', e => {
-        if (e.buttons === 4) {
+    canvas.addEventListener('mouseup', e => {
+        if (e.buttons === 0) {
             painting = false
             stopPainting()
             console.log('stopped painting');
