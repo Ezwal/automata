@@ -22,8 +22,8 @@ const paintData = offsetRgb(imageData.data)
 
 function paintPixels(changedId) {
     changedId.forEach(pixelOffset => {
-        paintData(pixelOffset * 4,
-                  props[World.at(pixelOffset)].color)
+        const colorFunc = props[World.at(pixelOffset)].color
+        paintData(pixelOffset * 4, colorFunc())
     })
 
     ctx.putImageData(imageData, 0, 0)
