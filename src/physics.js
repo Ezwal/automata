@@ -2,12 +2,40 @@ import { is, at, swap, up, down, left, right } from './world.js'
 import { materia, props } from './materia.js'
 import { scramble } from './util.js'
 
-function gravity(center) {
-    const centerDensity = props[at(center)].density
-    const belowIndex = down(center)
-    for (let toCheck of [belowIndex].concat(scramble(left(belowIndex), right(belowIndex)))) {
-        let toCheckDensity = props[at(toCheck)]?.density
-        if (toCheckDensity < centerDensity) {
+function force(direction, center, operation) {
+    const directionIndex = direction(center)
+    for (let toCheck of [directionIndex].concat(scramble(left(directionIndex), right(directionIndex)))) {
+        let result = operation(center, toCheck)
+        if (result.length !== 0) {
+            return result
+        }
+    }
+    return []
+}
+const gravity = center => force(down, center, (origin, destination) => {
+    const originDensity = props[at(origin)]?.density
+    const destinationDensity = props[at(destination)]?.density
+    if (destinationDensity < originDensity) {
+        return swap(destination, center)
+    }
+    return []
+})
+const antigravity = center => force(up, center, (origin, destination) => {
+    const originDensity = props[at(origin)]?.density
+    const destinationDensity = props[at(destination)]?.density
+    if (destinationDensity > originDensity) {
+        return swap(destination, origin)
+    }
+    return []
+})
+
+function gazPhysics(center) {
+    const floating = antigravity(center)
+    if (floating.length !== 0) {
+        return floating
+    }
+    for (let toCheck of scramble(left(center), right(center))) {
+        if (is(toCheck, materia.air)) {
             return swap(toCheck, center)
         }
     }
@@ -21,18 +49,6 @@ function waterPhysics(center) {
     }
     for (let toCheck of scramble(left(center), right(center))) {
         if (is(toCheck, materia.air)) {
-            return swap(toCheck, center)
-        }
-    }
-    return []
-}
-
-function gazPhysics(center) {
-    const centerDensity = props[at(center)].density
-    const upperIndex = up(center)
-    for (let toCheck of [upperIndex].concat(scramble(left(upperIndex), right(upperIndex)))) {
-        let toCheckDensity = props[at(toCheck)]?.density
-        if (toCheckDensity > centerDensity) {
             return swap(toCheck, center)
         }
     }
