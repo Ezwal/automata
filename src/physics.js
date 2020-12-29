@@ -1,4 +1,4 @@
-import { is, at, swap, up, down, left, right } from './world.js'
+import { is, at, swap, up, down, left, right, spawn } from './world.js'
 import { materia, props } from './materia.js'
 import { scramble } from './util.js'
 
@@ -55,4 +55,14 @@ function water(center) {
     return []
 }
 
-export default { water, gravity, gaz }
+function lava(center) {
+    return force(up, center, (origin, destination) => {
+        if (is(destination, materia.water)) {
+            return [spawn(destination, materia.ground),
+               spawn(origin, materia.gaz)]
+        }
+        return gravity(center)
+    })
+}
+
+export default { water, gravity, gaz, lava }

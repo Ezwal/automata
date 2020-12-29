@@ -78,4 +78,4 @@ function tick() {
 }
 
 
-export { init, get, at, tick, is, down, up, right, left, swap, paint, stopPainting }
+export { init, get, at, tick, is, down, up, right, left, swap, paint, stopPainting, spawn }

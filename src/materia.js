@@ -7,6 +7,7 @@ const materia = Object.freeze({
     water: 2,
     sand: 3,
     gaz: 4,
+    lava: 5
 })
 
 const props = Object.freeze({
@@ -37,7 +38,13 @@ const props = Object.freeze({
         color: () => [19, 199, 244],
         physic: physics.gaz,
         key: 'g',
-    }
+    },
+    [materia.lava]: {
+        density: 60,
+        color: () => [181, 3, 3],
+        physic: physics.lava,
+        key: 'l'
+    },
 })
 
 export { materia, props }
