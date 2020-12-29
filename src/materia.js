@@ -1,4 +1,4 @@
-import { waterPhysics, gravity, gazPhysics } from './physics.js'
+import physics from './physics.js'
 
 const materia = Object.freeze({
     air: 0,
@@ -22,19 +22,19 @@ const props = Object.freeze({
     [materia.water]: {
         density: 40,
         color: [0, 15, 255],
-        physic: waterPhysics,
+        physic: physics.water,
         key: 'w',
     },
     [materia.sand]: {
         density: 50,
         color: [244, 217, 14],
-        physic: gravity,
+        physic: physics.gravity,
         key: 's',
     },
     [materia.gaz]: {
         density: 0,
         color: [19, 199, 244],
-        physic: gazPhysics,
+        physic: physics.gaz,
         key: 'g',
     }
 })

@@ -29,7 +29,7 @@ const antigravity = center => force(up, center, (origin, destination) => {
     return []
 })
 
-function gazPhysics(center) {
+function gaz(center) {
     const floating = antigravity(center)
     if (floating.length !== 0) {
         return floating
@@ -42,7 +42,7 @@ function gazPhysics(center) {
     return []
 }
 
-function waterPhysics(center) {
+function water(center) {
     const falling = gravity(center)
     if (falling.length !== 0) {
         return falling
@@ -55,4 +55,4 @@ function waterPhysics(center) {
     return []
 }
 
-export { waterPhysics, gravity, gazPhysics }
+export default { water, gravity, gaz }
