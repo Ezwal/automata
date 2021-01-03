@@ -47,4 +47,13 @@ const props = Object.freeze({
     },
 })
 
-export { materia, props }
+const interaction = Object.freeze({
+    [materia.water]: {
+        [materia.lava]: (water, lava) => physics.waterLava(water, lava)
+    },
+    [materia.lava]: {
+        [materia.water]: (lava, water) => physics.waterLava(lava, water)
+    }
+})
+
+export { materia, props, interaction }

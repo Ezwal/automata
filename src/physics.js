@@ -1,5 +1,5 @@
 import { is, at, swap, up, down, left, right, spawn } from './world.js'
-import { materia, props } from './materia.js'
+import { materia, props, interaction } from './materia.js'
 import { scramble } from './util.js'
 
 function force(direction, center, operation) {
@@ -42,27 +42,40 @@ function gaz(center) {
     return []
 }
 
+const waterLava = (water, lava) => [spawn(water, materia.gaz), spawn(lava, materia.ground)]
+
+const interact = subjectMateria => (subjectIdx, targetIdx) => {
+    const materiaInteraction = interaction[subjectMateria]
+    const targetMateria = at(targetIdx)
+    const targetInteraction = materiaInteraction[targetMateria]
+    if (targetInteraction) {
+        return targetInteraction(subjectIdx, targetIdx)
+    }
+}
+
 function water(center) {
     const falling = gravity(center)
     if (falling.length !== 0) {
         return falling
     }
-    for (let toCheck of scramble(left(center), right(center))) {
-        if (is(toCheck, materia.air)) {
-            return swap(toCheck, center)
+    for (let target of scramble(left(center), right(center))) {
+        const interactionResult = interact(materia.water)(center, target)
+        if (interactionResult) {
+            return interactionResult
         }
     }
     return []
 }
 
 function lava(center) {
-    return force(up, center, (origin, destination) => {
-        if (is(destination, materia.water)) {
-            return [spawn(destination, materia.ground),
-               spawn(origin, materia.gaz)]
+    const potential = [down(center), up(center)].concat(scramble(left(center), right(center)))
+    for (let target of potential) {
+        const interactionResult = interact(materia.lava)(center, target)
+        if (interactionResult) {
+            return interactionResult
         }
-        return gravity(center)
-    })
+    }
+    return gravity(center)
 }
 
 export default { water, gravity, gaz, lava }
