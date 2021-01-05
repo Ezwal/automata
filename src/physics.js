@@ -2,32 +2,45 @@ import { is, at, swap, up, down, left, right, spawn } from './world.js'
 import { materia, props, interaction } from './materia.js'
 import { scramble } from './util.js'
 
-function force(direction, center, operation) {
-    const directionIndex = direction(center)
-    for (let toCheck of [directionIndex].concat(scramble(left(directionIndex), right(directionIndex)))) {
-        let result = operation(center, toCheck)
+function force(directions, center, fn) {
+    for (let toCheck of directions) {
+        let result = fn(center, toCheck)
         if (result.length !== 0) {
             return result
         }
     }
     return []
 }
-const gravity = center => force(down, center, (origin, destination) => {
+
+const densityPropagation = (origin, destination) => {
     const originDensity = props[at(origin)]?.density
     const destinationDensity = props[at(destination)]?.density
     if (destinationDensity < originDensity) {
-        return swap(destination, center)
-    }
-    return []
-})
-const antigravity = center => force(up, center, (origin, destination) => {
-    const originDensity = props[at(origin)]?.density
-    const destinationDensity = props[at(destination)]?.density
-    if (destinationDensity > originDensity) {
         return swap(destination, origin)
     }
     return []
-})
+}
+const scrambleLeftRight = i => scramble(left(i), right(i))
+const gravity = center => force([down(center)].concat(scrambleLeftRight(down(center))),
+                               center,
+                               densityPropagation)
+
+const spread = center => force([down(center)]
+                              .concat(scrambleLeftRight(down(center)),
+                                      scrambleLeftRight(center)),
+                             center,
+                             densityPropagation)
+
+const antigravity = center => force([up(center)].concat(scrambleLeftRight(up(center))),
+                                   center,
+                                   (origin, destination) => {
+                                       const originDensity = props[at(origin)]?.density
+                                       const destinationDensity = props[at(destination)]?.density
+                                       if (destinationDensity > originDensity) {
+                                           return swap(destination, origin)
+                                       }
+                                       return []
+                                   })
 
 function gaz(center) {
     const floating = antigravity(center)
@@ -54,7 +67,7 @@ const interact = subjectMateria => (subjectIdx, targetIdx) => {
 }
 
 function water(center) {
-    const falling = gravity(center)
+    const falling = spread(center)
     if (falling.length !== 0) {
         return falling
     }
@@ -78,4 +91,4 @@ function lava(center) {
     return gravity(center)
 }
 
-export default { water, gravity, gaz, lava }
+export default { water, gravity, gaz, lava, waterLava }
