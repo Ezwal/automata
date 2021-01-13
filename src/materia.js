@@ -1,7 +1,7 @@
-import physics from './physics.js'
+import * as physics from './physics.js'
 import { randBetween } from './util.js'
 
-const materia = Object.freeze({
+export const materia = Object.freeze({
     air: 0,
     ground: 1,
     water: 2,
@@ -10,7 +10,7 @@ const materia = Object.freeze({
     lava: 5
 })
 
-const props = Object.freeze({
+export const props = Object.freeze({
     [materia.air]: {
         density: 10,
         color: () => [255, 255, 255],
@@ -47,7 +47,7 @@ const props = Object.freeze({
     },
 })
 
-const interaction = Object.freeze({
+export const interaction = Object.freeze({
     [materia.water]: {
         [materia.lava]: (water, lava) => physics.waterLava(water, lava)
     },
@@ -55,5 +55,3 @@ const interaction = Object.freeze({
         [materia.water]: (lava, water) => physics.waterLava(lava, water)
     }
 })
-
-export { materia, props, interaction }

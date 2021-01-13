@@ -21,7 +21,7 @@ const densityPropagation = (origin, destination) => {
     return []
 }
 const scrambleLeftRight = i => scramble(left(i), right(i))
-const gravity = center => force([down(center)].concat(scrambleLeftRight(down(center))),
+export const gravity = center => force([down(center)].concat(scrambleLeftRight(down(center))),
                                center,
                                densityPropagation)
 
@@ -42,7 +42,7 @@ const antigravity = center => force([up(center)].concat(scrambleLeftRight(up(cen
                                        return []
                                    })
 
-function gaz(center) {
+export function gaz(center) {
     const floating = antigravity(center)
     if (floating.length !== 0) {
         return floating
@@ -55,7 +55,7 @@ function gaz(center) {
     return []
 }
 
-const waterLava = (water, lava) => [spawn(water, materia.gaz), spawn(lava, materia.ground)]
+export const waterLava = (water, lava) => [spawn(water, materia.gaz), spawn(lava, materia.ground)]
 
 const interact = subjectMateria => (subjectIdx, targetIdx) => {
     const materiaInteraction = interaction[subjectMateria]
@@ -66,7 +66,7 @@ const interact = subjectMateria => (subjectIdx, targetIdx) => {
     }
 }
 
-function water(center) {
+export function water(center) {
     const falling = spread(center)
     if (falling.length !== 0) {
         return falling
@@ -80,7 +80,7 @@ function water(center) {
     return []
 }
 
-function lava(center) {
+export function lava(center) {
     const potential = [down(center), up(center)].concat(scramble(left(center), right(center)))
     for (let target of potential) {
         const interactionResult = interact(materia.lava)(center, target)
@@ -90,5 +90,3 @@ function lava(center) {
     }
     return gravity(center)
 }
-
-export default { water, gravity, gaz, lava, waterLava }

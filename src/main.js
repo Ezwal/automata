@@ -11,10 +11,10 @@ ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx.createImageData(canvas.width, canvas.height)
 
 const dataOffset = (w, h) => ((canvas.width * w) + h) * 4
-const offsetRgb = data => (offset, [r, g, b]) => {
-    data[offset] = r
-    data[offset+1] = g
-    data[offset+2] = b
+const offsetRgb = data => (offset, [red, green, blue]) => {
+    data[offset] = red
+    data[offset+1] = green
+    data[offset+2] = blue
 }
 const getImageData = () => ctx.getImageData(0, 0, canvas.width, canvas.height)
 const imageData = getImageData()
