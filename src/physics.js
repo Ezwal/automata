@@ -1,5 +1,6 @@
 import { is, at, swap, up, down, left, right, spawn } from './world.js'
-import { materia, props, interaction } from './materia.js'
+import materia from './materia.js'
+import props from './properties.js'
 import { scramble } from './util.js'
 
 function force(directions, center, fn) {
@@ -57,22 +58,28 @@ export function gaz(center) {
 
 export const waterLava = (water, lava) => [spawn(water, materia.gaz), spawn(lava, materia.ground)]
 
-const interact = subjectMateria => (subjectIdx, targetIdx) => {
-    const materiaInteraction = interaction[subjectMateria]
+const interact = interactions => (subjectIdx, targetIdx) => {
     const targetMateria = at(targetIdx)
-    const targetInteraction = materiaInteraction[targetMateria]
+    const targetInteraction = interactions[targetMateria]
     if (targetInteraction) {
         return targetInteraction(subjectIdx, targetIdx)
+    } else {
+        return interactions.default(targetMateria)
     }
 }
 
+const waterInteraction = {
+    [materia.lava]: (water, lava) => waterLava(water, lava),
+    [materia.air]: (water, air) => swap(water, air),
+    default: () => {}
+}
 export function water(center) {
     const falling = spread(center)
     if (falling.length !== 0) {
         return falling
     }
     for (let target of scramble(left(center), right(center))) {
-        const interactionResult = interact(materia.water)(center, target)
+        const interactionResult = interact(waterInteraction)(center, target)
         if (interactionResult) {
             return interactionResult
         }
@@ -80,13 +87,18 @@ export function water(center) {
     return []
 }
 
+const lavaInteraction = {
+    [materia.water]: (lava, water) => waterLava(lava, water),
+    [materia.air]: (lava, other) => swap(lava, other),
+    default: () => {}
+}
 export function lava(center) {
-    const potential = [down(center), up(center)].concat(scramble(left(center), right(center)))
-    for (let target of potential) {
-        const interactionResult = interact(materia.lava)(center, target)
+    const potential = [down(center), up(center)].concat(scrambleLeftRight(center))
+        for (let target of potential) {
+            const interactionResult = interact(lavaInteraction)(center, target)
         if (interactionResult) {
             return interactionResult
         }
     }
-    return gravity(center)
+    return []
 }

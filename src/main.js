@@ -1,5 +1,5 @@
 import handleClick from './user.js'
-import { props } from './materia.js'
+import props from './properties.js'
 import * as World from './world.js'
 
 const canvas = document.getElementById('mainCanvas')

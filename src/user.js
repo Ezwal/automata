@@ -1,5 +1,6 @@
 import { paint, stopPainting } from './world.js'
-import { materia, props } from './materia.js'
+import materia from './materia.js'
+import props from './properties.js'
 
 const canvas = document.getElementById('mainCanvas')
 

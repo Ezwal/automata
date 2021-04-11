@@ -1,4 +1,4 @@
-import { props } from './materia.js'
+import props from './properties.js'
 
 let width = 0
 let height = 0
