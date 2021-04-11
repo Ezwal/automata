@@ -1,7 +1,6 @@
-import { is, at, swap, up, down, left, right, spawn } from './world.js'
-import materia from './materia.js'
-import { getProps } from './properties.js'
-import { scramble } from './util.js'
+import { is, at, swap, up, down, left, right, spawn } from './world'
+import { getProps } from './properties'
+import { scramble } from './util'
 
 function force(directions, center, fn) {
     for (let toCheck of directions) {
@@ -49,14 +48,14 @@ export function gaz(center) {
         return floating
     }
     for (let toCheck of scramble(left(center), right(center))) {
-        if (is(toCheck, materia.air)) {
+        if (is(toCheck, 0)) {
             return swap(toCheck, center)
         }
     }
     return []
 }
 
-export const waterLava = (water, lava) => [spawn(water, materia.gaz), spawn(lava, materia.ground)]
+export const waterLava = (water, lava) => [spawn(water, 4), spawn(lava, 1)]
 
 const interact = interactions => (subjectIdx, targetIdx) => {
     const targetMateria = at(targetIdx)
@@ -69,8 +68,8 @@ const interact = interactions => (subjectIdx, targetIdx) => {
 }
 
 const waterInteraction = {
-    [materia.lava]: (water, lava) => waterLava(water, lava),
-    [materia.air]: (water, air) => swap(water, air),
+    5: (water, lava) => waterLava(water, lava),
+    0: (water, air) => swap(water, air),
     default: () => {}
 }
 export function water(center) {
@@ -88,8 +87,8 @@ export function water(center) {
 }
 
 const lavaInteraction = {
-    [materia.water]: (lava, water) => waterLava(lava, water),
-    [materia.air]: (lava, other) => swap(lava, other),
+    2: (lava, water) => waterLava(lava, water),
+    0: (lava, other) => swap(lava, other),
     default: () => {}
 }
 export function lava(center) {

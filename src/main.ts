@@ -1,6 +1,6 @@
-import handleClick from './user.js'
-import { getProps } from './properties.js'
-import * as World from './world.js'
+import handleClick from './user'
+import { getProps } from './properties'
+import * as World from './world'
 
 const canvas = document.getElementById('mainCanvas')
 const ctx = canvas.getContext('2d')
