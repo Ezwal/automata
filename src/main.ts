@@ -10,7 +10,7 @@ ctx.fillStyle = 'white'
 ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx.createImageData(canvas.width, canvas.height)
 
-const dataOffset = (w, h) => ((canvas.width * w) + h) * 4
+const dataOffset = (w: number, h: number): number => ((canvas.width * w) + h) * 4
 const offsetRgb = data => (offset, [red, green, blue]) => {
     data[offset] = red
     data[offset+1] = green
