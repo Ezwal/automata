@@ -1,12 +1,15 @@
-import props from './properties.js'
+import { getProps } from './properties.js'
+
+type Idx = number
+type World = number[]
 
 let width = 0
 let height = 0
-let world = []
+let world: World = []
 let lastTouched = []
 
 // https://blog.usejournal.com/structurae-data-structures-for-high-performance-javascript-9b7da4c73f8
-export const init = (w, h) => {
+export function init(w: number, h: number): World {
     width = w
     height = h
     for (let i = 0; i < w * h; i++) {
@@ -16,16 +19,16 @@ export const init = (w, h) => {
     return world
 }
 
-export const is = (id, val) => world[id] === val
+export const is = (id: Idx, val: number): boolean => world[id] === val
 export const at = id => world[id]
-export const down = id => id + width
-export const up = id => id - width
-export const right = id => id % (width - 1) !== 0 ? id + 1 : -1
-export const left = id => id % width !== 0 ? id - 1 : -1
+export const down = (id: Idx): Idx => id + width
+export const up = (id: Idx) => id - width
+export const right = (id: Idx): Idx => id % (width - 1) !== 0 ? id + 1 : -1
+export const left = (id: Idx): Idx => id % width !== 0 ? id - 1 : -1
 
 let paintingIndex
 let paintingMateria
-export const paint = (x, y, materia) => {
+export const paint = (x: number, y: number, materia: number) => {
     const offset = x + y * width
     paintingIndex = offset
     paintingMateria = materia
@@ -34,14 +37,14 @@ export const stopPainting = () => {
     paintingIndex = undefined
 }
 
-export const spawn = (offset, materia) => {
-    if (offset >= 0 && offset < world.length) {
-        world[offset] = materia
-        return offset
+export function spawn(idx: Idx, materia: number) {
+    if (idx >= 0 && idx < world.length) {
+        world[idx] = materia
+        return idx
     }
 }
 
-export const swap = (idA, idB) => {
+export function swap(idA: Idx, idB: Idx): Idx[] {
     const matA = world[idA]
     const matB = world[idB]
 
@@ -50,14 +53,14 @@ export const swap = (idA, idB) => {
     return [idA, idB]
 }
 
-export const get = () => world
+export const get = (): World => world
 
 let tickNb = 0
 export function tick() {
     let currentChange = []
     for (let i of lastTouched) {
         if (!currentChange.includes(i)) {
-            const physic = props[at(i)].physic
+            const physic = getProps(at(i)).physic
             if (physic) {
                 currentChange = currentChange.concat(physic(i))
             }

@@ -1,5 +1,5 @@
 import handleClick from './user.js'
-import props from './properties.js'
+import { getProps } from './properties.js'
 import * as World from './world.js'
 
 const canvas = document.getElementById('mainCanvas')
@@ -22,7 +22,7 @@ const paintData = offsetRgb(imageData.data)
 
 function paintPixels(changedId) {
     changedId.forEach(pixelOffset => {
-        const colorFunc = props[World.at(pixelOffset)].color
+        const colorFunc = getProps(World.at(pixelOffset)).color
         paintData(pixelOffset * 4, colorFunc())
     })
 

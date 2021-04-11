@@ -1,6 +1,6 @@
 import { is, at, swap, up, down, left, right, spawn } from './world.js'
 import materia from './materia.js'
-import props from './properties.js'
+import { getProps } from './properties.js'
 import { scramble } from './util.js'
 
 function force(directions, center, fn) {
@@ -14,8 +14,8 @@ function force(directions, center, fn) {
 }
 
 const densityPropagation = (origin, destination) => {
-    const originDensity = props[at(origin)]?.density
-    const destinationDensity = props[at(destination)]?.density
+    const originDensity = getProps(at(origin))?.density
+    const destinationDensity = getProps(at(destination))?.density
     if (destinationDensity < originDensity) {
         return swap(destination, origin)
     }
@@ -35,8 +35,8 @@ const spread = center => force([down(center)]
 const antigravity = center => force([up(center)].concat(scrambleLeftRight(up(center))),
                                    center,
                                    (origin, destination) => {
-                                       const originDensity = props[at(origin)]?.density
-                                       const destinationDensity = props[at(destination)]?.density
+                                       const originDensity = getProps(at(origin))?.density
+                                       const destinationDensity = getProps(at(destination))?.density
                                        if (destinationDensity > originDensity) {
                                            return swap(destination, origin)
                                        }

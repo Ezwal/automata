@@ -2,7 +2,15 @@ import * as physics from './physics.js'
 import materia from './materia.js'
 import { randBetween } from './util.js'
 
-export default Object.freeze({
+export interface MateriaProps {
+    name: string,
+    density: number,
+    color: () => number[],
+    key: string,
+    physic?: any,
+}
+
+export const propsList = Object.freeze({
     [materia.air]: {
         name: 'air',
         density: 10,
@@ -44,3 +52,11 @@ export default Object.freeze({
         key: 'l'
     },
 })
+
+export function getProps(propsNb: number): MateriaProps {
+    try {
+        return propsList[propsNb]
+    } catch (err) {
+        throw new Error('Such materia does not exists (nb: ${propsNb})')
+    }
+}

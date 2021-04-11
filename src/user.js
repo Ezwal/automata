@@ -1,14 +1,14 @@
 import { paint, stopPainting } from './world.js'
 import materia from './materia.js'
-import props from './properties.js'
+import { propsList, getProps } from './properties.js'
 
 const canvas = document.getElementById('mainCanvas')
 
-const materiaKeyCode = Object.keys(props)
-                             .reduce((keyToMateria, el) => {
-                                 keyToMateria[props[el].key] = Number(el)
-                                 return keyToMateria
-                             }, {})
+const materiaKeyCode = Object.keys(propsList)
+                             .reduce((keyToMateria, el) => ({
+                                 [getProps(el).key]: Number(el),
+                                 ...keyToMateria
+                             }), {})
 
 function handleClick() {
     let painting = undefined
