@@ -21,6 +21,6 @@ export default {
             watch: 'src',
             verbose: 'true',
         }),
-        typescript(),
+        typescript({'lib': ['es2020', 'dom'], target: 'es2020'}),
     ]
 }
