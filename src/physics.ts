@@ -57,7 +57,9 @@ export function gaz(center: Idx) {
     return []
 }
 
-export const waterLava = (water, lava) => [spawn(water, 4), spawn(lava, 1)]
+export const waterLava = (water: Idx, lava: Idx): Array<Idx> =>
+    [spawn(water, 4), spawn(lava, 1)]
+
 
 const interact = (interactions: Interaction) => (subjectIdx: Idx, targetIdx: Idx): Array<Idx> => {
     const targetMateria = at(targetIdx)
@@ -70,8 +72,8 @@ const interact = (interactions: Interaction) => (subjectIdx: Idx, targetIdx: Idx
 }
 
 const waterInteraction: Interaction = {
-    5: (water, lava) => waterLava(water, lava),
-    0: (water, air) => swap(water, air),
+    5: (water: Idx, lava: Idx): Array<Idx> => waterLava(water, lava),
+    0: (water: Idx, air: Idx): Array<Idx> => swap(water, air),
     default: () => {}
 }
 export function water(center: Idx): Array<Idx> {
@@ -89,8 +91,8 @@ export function water(center: Idx): Array<Idx> {
 }
 
 const lavaInteraction: Interaction = {
-    2: (lava, water) => waterLava(lava, water),
-    0: (lava, other) => swap(lava, other),
+    2: (lava: Idx, water: Idx) => waterLava(lava, water),
+    0: (lava: Idx, other: Idx) => swap(lava, other),
     default: () => {}
 }
 export function lava(center: Idx): Array<Idx> {
