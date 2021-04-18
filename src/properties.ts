@@ -41,7 +41,7 @@ export const propsList = [{
         key: 's',
     },
     {
-        name: 'gaz',
+        name: 'vapor',
         density: 0,
         state: 'gas',
         color: () => [19, 199, 244],
