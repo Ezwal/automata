@@ -1,21 +1,18 @@
 import { getProps } from './properties.js'
 
 export type Idx = number
-export type World = number[]
+export type World = Uint8Array
 
 let width = 0
 let height = 0
-let world: World = []
-let lastTouched = []
+let world = undefined
+let lastTouched: Array<Idx> = []
 
 // https://blog.usejournal.com/structurae-data-structures-for-high-performance-javascript-9b7da4c73f8
 export function init(w: number, h: number): World {
     width = w
     height = h
-    for (let i = 0; i < w * h; i++) {
-        world[i] = 0
-        lastTouched.push(i)
-    }
+    world = new Uint8Array(w*h)
     return world
 }
 
@@ -74,7 +71,7 @@ export function tick(): Array<Idx> {
     if (paintingIndex) {
         const changed = spawn(paintingIndex, paintingMateria)
         if (changed) {
-            currentChange.push()
+            currentChange.push(changed)
         }
     }
 
