@@ -2,7 +2,7 @@ import handleClick from './user'
 import { getProps } from './properties'
 import * as World from './world'
 
-const canvas = document.getElementById('mainCanvas')
+const canvas = <HTMLCanvasElement> document.getElementById('mainCanvas')
 const ctx = canvas.getContext('2d')
 ctx.imageSmoothingEnabled = false
 

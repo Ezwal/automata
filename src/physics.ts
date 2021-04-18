@@ -67,7 +67,7 @@ const interact = (interactions: Interaction) => (subjectIdx: Idx, targetIdx: Idx
     if (targetInteraction) {
         return targetInteraction(subjectIdx, targetIdx)
     } else {
-        return interactions.default(targetMateria)
+        return interactions['default'](targetMateria)
     }
 }
 
