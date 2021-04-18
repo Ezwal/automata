@@ -1,7 +1,7 @@
 import { getProps } from './properties.js'
 
-type Idx = number
-type World = number[]
+export type Idx = number
+export type World = number[]
 
 let width = 0
 let height = 0
@@ -20,7 +20,7 @@ export function init(w: number, h: number): World {
 }
 
 export const is = (id: Idx, val: number): boolean => world[id] === val
-export const at = id => world[id]
+export const at = (id: Idx): number => world[id]
 export const down = (id: Idx): Idx => id + width
 export const up = (id: Idx) => id - width
 export const right = (id: Idx): Idx => id % (width - 1) !== 0 ? id + 1 : -1
@@ -28,12 +28,12 @@ export const left = (id: Idx): Idx => id % width !== 0 ? id - 1 : -1
 
 let paintingIndex
 let paintingMateria
-export const paint = (x: number, y: number, materia: number) => {
+export const paint = (x: number, y: number, materia: number): void => {
     const offset = x + y * width
     paintingIndex = offset
     paintingMateria = materia
 }
-export const stopPainting = () => {
+export const stopPainting = (): void => {
     paintingIndex = undefined
 }
 
@@ -44,7 +44,7 @@ export function spawn(idx: Idx, materia: number) {
     }
 }
 
-export function swap(idA: Idx, idB: Idx): Idx[] {
+export function swap(idA: Idx, idB: Idx): Array<Idx> {
     const matA = world[idA]
     const matB = world[idB]
 
@@ -56,8 +56,8 @@ export function swap(idA: Idx, idB: Idx): Idx[] {
 export const get = (): World => world
 
 let tickNb = 0
-export function tick() {
-    let currentChange = []
+export function tick(): Array<Idx> {
+    let currentChange: Array<Idx> = []
     for (let i of lastTouched) {
         if (!currentChange.includes(i)) {
             const physic = getProps(at(i)).physic
@@ -72,7 +72,10 @@ export function tick() {
         currentChange.push(100, 78)
     }
     if (paintingIndex) {
-        currentChange.push(spawn(paintingIndex, paintingMateria))
+        const changed = spawn(paintingIndex, paintingMateria)
+        if (changed) {
+            currentChange.push()
+        }
     }
 
     tickNb += 1
