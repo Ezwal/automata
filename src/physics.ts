@@ -1,8 +1,10 @@
-import { is, at, swap, up, down, left, right, spawn } from './world'
-import { getProps } from './properties'
+import { is, at, swap, up, down, left, right, spawn, Idx } from './world'
+import { getProps, MateriaProps } from './properties'
 import { scramble } from './util'
 
-function force(directions, center, fn) {
+type Interaction = object
+
+function force(directions: Array<Idx>, center: Idx, fn: Function): Array<Idx> {
     for (let toCheck of directions) {
         let result = fn(center, toCheck)
         if (result.length !== 0) {
@@ -12,7 +14,7 @@ function force(directions, center, fn) {
     return []
 }
 
-const densityPropagation = (origin, destination) => {
+const densityPropagation = (origin: Idx, destination: Idx): Array<Idx> => {
     const originDensity = getProps(at(origin))?.density
     const destinationDensity = getProps(at(destination))?.density
     if (destinationDensity < originDensity) {
@@ -20,18 +22,18 @@ const densityPropagation = (origin, destination) => {
     }
     return []
 }
-const scrambleLeftRight = i => scramble(left(i), right(i))
-export const gravity = center => force([down(center)].concat(scrambleLeftRight(down(center))),
+const scrambleLeftRight = (i: Idx): Array<Idx> => scramble(left(i), right(i))
+export const gravity = (center: Idx): Array<Idx> => force([down(center)].concat(scrambleLeftRight(down(center))),
                                center,
                                densityPropagation)
 
-const spread = center => force([down(center)]
+const spread = (center: Idx): Array<Idx> => force([down(center)]
                               .concat(scrambleLeftRight(down(center)),
                                       scrambleLeftRight(center)),
                              center,
                              densityPropagation)
 
-const antigravity = center => force([up(center)].concat(scrambleLeftRight(up(center))),
+const antigravity = (center: Idx): Array<Idx> => force([up(center)].concat(scrambleLeftRight(up(center))),
                                    center,
                                    (origin, destination) => {
                                        const originDensity = getProps(at(origin))?.density
@@ -42,7 +44,7 @@ const antigravity = center => force([up(center)].concat(scrambleLeftRight(up(cen
                                        return []
                                    })
 
-export function gaz(center) {
+export function gaz(center: Idx) {
     const floating = antigravity(center)
     if (floating.length !== 0) {
         return floating
@@ -57,7 +59,7 @@ export function gaz(center) {
 
 export const waterLava = (water, lava) => [spawn(water, 4), spawn(lava, 1)]
 
-const interact = interactions => (subjectIdx, targetIdx) => {
+const interact = (interactions: Interaction) => (subjectIdx: Idx, targetIdx: Idx): Array<Idx> => {
     const targetMateria = at(targetIdx)
     const targetInteraction = interactions[targetMateria]
     if (targetInteraction) {
@@ -67,12 +69,12 @@ const interact = interactions => (subjectIdx, targetIdx) => {
     }
 }
 
-const waterInteraction = {
+const waterInteraction: Interaction = {
     5: (water, lava) => waterLava(water, lava),
     0: (water, air) => swap(water, air),
     default: () => {}
 }
-export function water(center) {
+export function water(center: Idx): Array<Idx> {
     const falling = spread(center)
     if (falling.length !== 0) {
         return falling
@@ -86,12 +88,12 @@ export function water(center) {
     return []
 }
 
-const lavaInteraction = {
+const lavaInteraction: Interaction = {
     2: (lava, water) => waterLava(lava, water),
     0: (lava, other) => swap(lava, other),
     default: () => {}
 }
-export function lava(center) {
+export function lava(center: Idx): Array<Idx> {
     const potential = [down(center), up(center)].concat(scrambleLeftRight(center))
         for (let target of potential) {
             const interactionResult = interact(lavaInteraction)(center, target)
