@@ -11,20 +11,19 @@ ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx.createImageData(canvas.width, canvas.height)
 
 const dataOffset = (w: number, h: number): number => ((canvas.width * w) + h) * 4
-const offsetRgb = data => (offset, [red, green, blue]) => {
+const paintData = data => (offset, [red, green, blue]) => {
     data[offset] = red
     data[offset+1] = green
     data[offset+2] = blue
 }
-const getImageData = () => ctx.getImageData(0, 0, canvas.width, canvas.height)
-const imageData = getImageData()
-const paintData = offsetRgb(imageData.data)
+const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+const paintOffsetRgb = paintData(imageData.data)
 
 function paintPixels(changedId) {
-    changedId.forEach(pixelOffset => {
+    for (const pixelOffset of changedId) {
         const colorFunc = getProps(World.at(pixelOffset)).color
-        paintData(pixelOffset * 4, colorFunc())
-    })
+        paintOffsetRgb(pixelOffset * 4, colorFunc())
+    }
 
     ctx.putImageData(imageData, 0, 0)
 }
