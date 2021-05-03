@@ -1,7 +1,8 @@
-import { getProps } from './properties.js'
+import { getProps } from './properties'
+import { simulate } from './physics'
 
 export type Idx = number
-export type World = Uint8Array
+export type World = number[]
 
 let width = 0
 let height = 0
@@ -12,14 +13,18 @@ let lastTouched: Array<Idx> = []
 export function init(w: number, h: number): World {
     width = w
     height = h
-    world = new Uint8Array(w*h)
+    world = []
+    for (let i = 0; i < width * height; i++) {
+        world[i] = 0
+    }
     return world
 }
 
 export const is = (id: Idx, val: number): boolean => world[id] === val
-export const at = (id: Idx): number => world[id]
+const outOfBond = (id: Idx): boolean => id > 0 && id < world.length
+export const at = (id: Idx): Idx => outOfBond(id) ? world[id] : undefined
 export const down = (id: Idx): Idx => id + width
-export const up = (id: Idx) => id - width
+export const up = (id: Idx): Idx => id - width
 export const right = (id: Idx): Idx => id % (width - 1) !== 0 ? id + 1 : -1
 export const left = (id: Idx): Idx => id % width !== 0 ? id - 1 : -1
 
@@ -43,9 +48,8 @@ export function spawn(idx: Idx, materia: number) {
 
 export function swap(idA: Idx, idB: Idx): Array<Idx> {
     const matA = world[idA]
-    const matB = world[idB]
 
-    world[idA] = matB
+    world[idA] = world[idB]
     world[idB] = matA
     return [idA, idB]
 }
@@ -57,10 +61,8 @@ export function tick(): Array<Idx> {
     let currentChange: Array<Idx> = []
     for (let i of lastTouched) {
         if (!currentChange.includes(i)) {
-            const physic = getProps(at(i)).physic
-            if (physic) {
-                currentChange = currentChange.concat(physic(i))
-            }
+            const touched = simulate(i)
+            currentChange = currentChange.concat(touched)
         }
     }
     if (tickNb < 200 && tickNb > 0) {
@@ -77,6 +79,9 @@ export function tick(): Array<Idx> {
 
     tickNb += 1
     lastTouched = currentChange
+    if (currentChange.length > 0) {
+        console.debug('updated idx :', currentChange)
+    }
     return currentChange
 }
 

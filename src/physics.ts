@@ -1,107 +1,67 @@
 import { is, at, swap, up, down, left, right, spawn, Idx } from './world'
-import { getProps, MateriaProps } from './properties'
+import { getProps, getPropsName, MateriaProps } from './properties'
 import { scramble } from './util'
 
-type Interaction = object
+type Interaction = (subject: Idx, target: Idx) => Array<Idx>
+type Interactions = { [subject: string]: { [target: string]: Interaction }}
 
-function force(directions: Array<Idx>, center: Idx, fn: Function): Array<Idx> {
-    for (let toCheck of directions) {
-        let result = fn(center, toCheck)
-        if (result.length !== 0) {
-            return result
-        }
-    }
-    return []
-}
-
-const densityPropagation = (origin: Idx, destination: Idx): Array<Idx> => {
-    const originDensity = getProps(at(origin))?.density
-    const destinationDensity = getProps(at(destination))?.density
-    if (destinationDensity < originDensity) {
-        return swap(destination, origin)
-    }
-    return []
-}
 const scrambleLeftRight = (i: Idx): Array<Idx> => scramble(left(i), right(i))
-export const gravity = (center: Idx): Array<Idx> => force([down(center)].concat(scrambleLeftRight(down(center))),
-                               center,
-                               densityPropagation)
 
-const spread = (center: Idx): Array<Idx> => force([down(center)]
-                              .concat(scrambleLeftRight(down(center)),
-                                      scrambleLeftRight(center)),
-                             center,
-                             densityPropagation)
+const lavaQuench = (water: Idx, lava: Idx): Array<Idx> => [spawn(water, 4), spawn(lava, 1)]
+const glassification = (sand: Idx): Array<Idx> => [spawn(sand, 6)]
 
-const antigravity = (center: Idx): Array<Idx> => force([up(center)].concat(scrambleLeftRight(up(center))),
-                                   center,
-                                   (origin, destination) => {
-                                       const originDensity = getProps(at(origin))?.density
-                                       const destinationDensity = getProps(at(destination))?.density
-                                       if (destinationDensity > originDensity) {
-                                           return swap(destination, origin)
-                                       }
-                                       return []
-                                   })
-
-export function gaz(center: Idx) {
-    const floating = antigravity(center)
-    if (floating.length !== 0) {
-        return floating
+const interactions: Interactions = {
+    water: {
+        lava: (water: Idx, lava: Idx): Array<Idx> => lavaQuench(lava, water),
+    },
+    lava: {
+        water: (lava: Idx, water: Idx): Array<Idx> => lavaQuench(lava, water),
+        sand: (lava: Idx, sand: Idx): Array<Idx> => glassification(sand),
+    },
+    sand: {
+        lava: (sand: Idx, lava: Idx): Array<Idx> => glassification(sand)
     }
-    for (let toCheck of scramble(left(center), right(center))) {
-        if (is(toCheck, 0)) {
-            return swap(toCheck, center)
+}
+const interact = (subject: string, target: string): Interaction => {
+    const subjectInteractions = interactions[subject]
+    if (subjectInteractions) {
+        const targetSubjectInteractions = subjectInteractions[target]
+        if (targetSubjectInteractions) {
+            return targetSubjectInteractions
+        }
+    }
+}
+
+function stateSim(center: Idx, centerMateria: MateriaProps, potentials: Array<Idx>, isFalling: boolean): Array<Idx> {
+    for (let potential of potentials) {
+        const trajectoryMateria = getProps(at(potential))
+        if (trajectoryMateria) {
+            const potentialReaction = interact(centerMateria.name, trajectoryMateria.name)
+            if (potentialReaction) {
+                return potentialReaction(center, potential)
+            }
+            if (isFalling ? trajectoryMateria.density < centerMateria.density
+                : trajectoryMateria.density > centerMateria.density) {
+                return swap(center, potential)
+            }
         }
     }
     return []
 }
 
-export const waterLava = (water: Idx, lava: Idx): Array<Idx> =>
-    [spawn(water, 4), spawn(lava, 1)]
+const airDensity = getPropsName('air').density
+export function simulate(center: Idx): Array<Idx> {
+    const centerMateria = getProps(at(center))
+    const falling = centerMateria.density > airDensity ? true : false
+    const trajectory = falling ? down : up
 
-
-const interact = (interactions: Interaction) => (subjectIdx: Idx, targetIdx: Idx): Array<Idx> => {
-    const targetMateria = at(targetIdx)
-    const targetInteraction = interactions[targetMateria]
-    if (targetInteraction) {
-        return targetInteraction(subjectIdx, targetIdx)
-    } else {
-        return interactions['default'](targetMateria)
+    const target = trajectory(center)
+    if (centerMateria.state === 'liquid' || centerMateria.state === 'gas') {
+        return stateSim(center, centerMateria, [target, ...scrambleLeftRight(target),
+                                    ...scrambleLeftRight(center)], falling)
     }
-}
-
-const waterInteraction: Interaction = {
-    5: (water: Idx, lava: Idx): Array<Idx> => waterLava(water, lava),
-    0: (water: Idx, air: Idx): Array<Idx> => swap(water, air),
-    default: () => {}
-}
-export function water(center: Idx): Array<Idx> {
-    const falling = spread(center)
-    if (falling.length !== 0) {
-        return falling
-    }
-    for (let target of scramble(left(center), right(center))) {
-        const interactionResult = interact(waterInteraction)(center, target)
-        if (interactionResult) {
-            return interactionResult
-        }
-    }
-    return []
-}
-
-const lavaInteraction: Interaction = {
-    2: (lava: Idx, water: Idx) => waterLava(lava, water),
-    0: (lava: Idx, other: Idx) => swap(lava, other),
-    default: () => {}
-}
-export function lava(center: Idx): Array<Idx> {
-    const potential = [down(center), up(center)].concat(scrambleLeftRight(center))
-        for (let target of potential) {
-            const interactionResult = interact(lavaInteraction)(center, target)
-        if (interactionResult) {
-            return interactionResult
-        }
+    if (centerMateria.name === 'sand') {
+        return stateSim(center, centerMateria, [target, ...scrambleLeftRight(target)], falling)
     }
     return []
 }

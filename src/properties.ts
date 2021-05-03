@@ -7,7 +7,6 @@ export interface MateriaProps {
     state: string,
     color: () => number[],
     key: string,
-    physic?: any
 }
 
 export const propsList = [{
@@ -29,7 +28,6 @@ export const propsList = [{
         density: 40,
         state: 'liquid',
         color: () => [0, randBetween(0, 60), randBetween(200, 255)],
-        physic: physics.water,
         key: 'w',
     },
     {
@@ -37,7 +35,6 @@ export const propsList = [{
         density: 50,
         state: 'solid',
         color: () => [randBetween(200, 244), randBetween(200, 217), 14],
-        physic: physics.gravity,
         key: 's',
     },
     {
@@ -45,17 +42,22 @@ export const propsList = [{
         density: 0,
         state: 'gas',
         color: () => [19, 199, 244],
-        physic: physics.gaz,
-        key: 'g',
+        key: 'v',
     },
     {
         name: 'lava',
         density: 60,
         state: 'liquid',
         color: () => [181, 3, 3],
-        physic: physics.lava,
         key: 'l'
     },
+    {
+        name: 'glass',
+        density: 45,
+        state: 'solid',
+        color: () => [53, 0, 88],
+        key: 'g'
+    }
 ]
 
 export const materia = Object.entries(propsList)
@@ -64,10 +66,14 @@ export const materia = Object.entries(propsList)
         return prop
     }, {})
 
+export function getPropsName(propsName: string): MateriaProps {
+    return getProps(materia[propsName])
+}
+
 export function getProps(propsNb: number): MateriaProps {
     try {
         return propsList[propsNb]
     } catch (err) {
-        throw new Error('Such materia does not exists (nb: ${propsNb})')
+        throw new Error(`Such materia does not exists (nb: ${propsNb})`)
     }
 }
