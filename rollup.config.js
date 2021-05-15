@@ -19,7 +19,7 @@ export default {
         }),
         livereload({
             watch: 'src',
-            verbose: 'true',
+            verbose: true,
         }),
         typescript({'lib': ['es2020', 'dom'], target: 'es2020'}),
     ]

@@ -1,4 +1,4 @@
-import { is, at, swap, up, down, left, right, spawn, Idx } from './world'
+import { at, swap, up, down, left, right, spawn, Idx } from './world'
 import { getProps, getPropsName, MateriaProps } from './properties'
 import { scramble } from './util'
 

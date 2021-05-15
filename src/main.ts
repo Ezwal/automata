@@ -11,7 +11,7 @@ ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx.createImageData(canvas.width, canvas.height)
 
 const dataOffset = (w: number, h: number): number => ((canvas.width * w) + h) * 4
-const paintData = data => (offset, [red, green, blue]) => {
+const paintData = (data: Uint8ClampedArray) => (offset: World.Idx, [red, green, blue]: Array<number>) => {
     data[offset] = red
     data[offset+1] = green
     data[offset+2] = blue
@@ -24,7 +24,6 @@ function paintPixels(changedId) {
         const colorFunc = getProps(World.at(pixelOffset)).color
         paintOffsetRgb(pixelOffset * 4, colorFunc())
     }
-
     ctx.putImageData(imageData, 0, 0)
 }
 
@@ -36,7 +35,9 @@ function loop() {
 function main() {
     handleClick()
     World.init(canvas.width, canvas.height)
+    // @ts-ignore
     createjs.Ticker.addEventListener('tick', loop)
+    // @ts-ignore
     createjs.Ticker.framerate = 30
 }
 

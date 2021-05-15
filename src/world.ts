@@ -20,7 +20,6 @@ export function init(w: number, h: number): World {
     return world
 }
 
-export const is = (id: Idx, val: number): boolean => world[id] === val
 const outOfBond = (id: Idx): boolean => id > 0 && id < world.length
 export const at = (id: Idx): Idx => outOfBond(id) ? world[id] : undefined
 export const down = (id: Idx): Idx => id + width
@@ -28,8 +27,8 @@ export const up = (id: Idx): Idx => id - width
 export const right = (id: Idx): Idx => id % (width - 1) !== 0 ? id + 1 : -1
 export const left = (id: Idx): Idx => id % width !== 0 ? id - 1 : -1
 
-let paintingIndex
-let paintingMateria
+let paintingIndex: Idx
+let paintingMateria: number
 export const paint = (x: number, y: number, materia: number): void => {
     const offset = x + y * width
     paintingIndex = offset
