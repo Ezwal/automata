@@ -1,11 +1,11 @@
 import { paint, stopPainting } from './world'
-import { propsList, getProps } from './properties'
+import { propsList, propsById } from './properties'
 
 const canvas = document.getElementById('mainCanvas')
 
 const materiaKeyCode = Object.keys(propsList)
                              .reduce((keyToMateria, el) => ({
-                                 [getProps(el).key]: Number(el),
+                                 [propsById(el).key]: Number(el),
                                  ...keyToMateria
                              }), {})
 

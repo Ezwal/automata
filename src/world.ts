@@ -1,4 +1,3 @@
-import { getProps } from './properties'
 import { simulate } from './physics'
 
 export type Idx = number

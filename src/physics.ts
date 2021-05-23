@@ -1,5 +1,5 @@
 import { at, swap, up, down, left, right, spawn, Idx } from './world'
-import { getProps, getPropsName, MateriaProps } from './properties'
+import { propsById, propsByName, MateriaProps, State } from './properties'
 import { scramble } from './util'
 
 type Interaction = (subject: Idx, target: Idx) => Array<Idx>
@@ -34,7 +34,7 @@ const interact = (subject: string, target: string): Interaction => {
 
 function stateSim(center: Idx, centerMateria: MateriaProps, potentials: Array<Idx>, isFalling: boolean): Array<Idx> {
     for (let potential of potentials) {
-        const trajectoryMateria = getProps(at(potential))
+        const trajectoryMateria = propsById(at(potential))
         if (trajectoryMateria) {
             const potentialReaction = interact(centerMateria.name, trajectoryMateria.name)
             if (potentialReaction) {
@@ -49,14 +49,14 @@ function stateSim(center: Idx, centerMateria: MateriaProps, potentials: Array<Id
     return []
 }
 
-const airDensity = getPropsName('air').density
+const airDensity = propsByName('air').density
 export function simulate(center: Idx): Array<Idx> {
-    const centerMateria = getProps(at(center))
+    const centerMateria = propsById(at(center))
     const falling = centerMateria.density > airDensity ? true : false
     const trajectory = falling ? down : up
 
     const target = trajectory(center)
-    if (centerMateria.state === 'liquid' || centerMateria.state === 'gas') {
+    if (centerMateria.state === State.Liquid || centerMateria.state === State.Gas) {
         return stateSim(center, centerMateria, [target, ...scrambleLeftRight(target),
                                     ...scrambleLeftRight(center)], falling)
     }

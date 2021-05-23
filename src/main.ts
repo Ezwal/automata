@@ -1,5 +1,5 @@
 import handleClick from './user'
-import { getProps } from './properties'
+import { propsById } from './properties'
 import * as World from './world'
 
 const canvas = <HTMLCanvasElement> document.getElementById('mainCanvas')
@@ -21,7 +21,7 @@ const paintOffsetRgb = paintData(imageData.data)
 
 function paintPixels(changedId) {
     for (const pixelOffset of changedId) {
-        const colorFunc = getProps(World.at(pixelOffset)).color
+        const colorFunc = propsById(World.at(pixelOffset)).color
         paintOffsetRgb(pixelOffset * 4, colorFunc())
     }
     ctx.putImageData(imageData, 0, 0)
