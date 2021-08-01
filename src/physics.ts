@@ -16,10 +16,10 @@ const interactions: Interactions = {
     },
     lava: {
         water: (lava: Idx, water: Idx): Array<Idx> => lavaQuench(lava, water),
-        sand: (lava: Idx, sand: Idx): Array<Idx> => glassification(sand),
+        sand: (_: Idx, sand: Idx): Array<Idx> => glassification(sand),
     },
     sand: {
-        lava: (sand: Idx, lava: Idx): Array<Idx> => glassification(sand)
+        lava: (sand: Idx, _: Idx): Array<Idx> => glassification(sand)
     }
 }
 const interact = (subject: string, target: string): Interaction => {
@@ -40,7 +40,8 @@ function stateSim(center: Idx, centerMateria: MateriaProps, potentials: Array<Id
             if (potentialReaction) {
                 return potentialReaction(center, potential)
             }
-            if (isFalling ? trajectoryMateria.density < centerMateria.density
+            if (isFalling
+                ? trajectoryMateria.density < centerMateria.density
                 : trajectoryMateria.density > centerMateria.density) {
                 return swap(center, potential)
             }
