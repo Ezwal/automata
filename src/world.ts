@@ -50,10 +50,9 @@ export function spawn(idx: Idx, materia: number) {
 }
 
 export function swap(idA: Idx, idB: Idx): Array<Idx> {
-    const matA = world[idA]
-
-    world[idA] = world[idB]
-    world[idB] = matA
+    world[idA] ^= world[idB]
+    world[idB] ^= world[idA]
+    world[idA] ^= world[idB]
     return [idA, idB]
 }
 
