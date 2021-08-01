@@ -9,18 +9,21 @@ export default {
         format: 'iife',
         name: 'pixelMage'
     },
+    watch: {
+        include: 'src/**/*'
+    },
     plugins: [
+        typescript({'lib': ['es2020', 'dom'], target: 'es2020'}),
         serve({
             open: true,
             verbose: true,
-            contentBase: ['dist', 'src'],
+            contentBase: ['dist'],
             host: 'localhost',
             port: 8080,
         }),
         livereload({
-            watch: 'src',
+            watch: 'dist',
             verbose: true,
         }),
-        typescript({'lib': ['es2020', 'dom'], target: 'es2020'}),
     ]
 }
