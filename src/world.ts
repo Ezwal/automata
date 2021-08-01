@@ -1,4 +1,5 @@
 import { simulate } from './physics'
+import { materia } from './properties'
 
 export type Idx = number
 export type World = number[]
@@ -37,6 +38,10 @@ export const stopPainting = (): void => {
     paintingIndex = undefined
 }
 
+export function spawnByName(idx: Idx, materiaName: string) {
+    return spawn(idx, materia[materiaName])
+}
+
 export function spawn(idx: Idx, materia: number) {
     if (idx >= 0 && idx < world.length) {
         world[idx] = materia
@@ -63,10 +68,9 @@ export function tick(): Array<Idx> {
             currentChange = currentChange.concat(touched)
         }
     }
-    if (tickNb < 200 && tickNb > 0) {
-        world[100] = 3
-        world[78] = 2
-        currentChange.push(100, 78)
+    if (tickNb < 100 && tickNb > 0) {
+        currentChange.push(spawnByName(90, 'water'),
+                           spawnByName(78, 'sand'))
     }
     if (paintingIndex) {
         const changed = spawn(paintingIndex, paintingMateria)
