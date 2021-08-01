@@ -55,6 +55,9 @@ export function simulate(center: Idx): Array<Idx> {
     const centerMateria = propsById(at(center))
     const falling = centerMateria.density > airDensity ? true : false
     const trajectory = falling ? down : up
+    if (centerMateria.name === 'air') {
+        return []
+    }
 
     const target = trajectory(center)
     if (centerMateria.state === State.Liquid || centerMateria.state === State.Gas) {
