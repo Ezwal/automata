@@ -81,6 +81,7 @@ export function propsById(propsNb: number): MateriaProps {
 }
 
 export function propsByName(propsName: string): MateriaProps {
+    // @ts-ignore
     return Object
         .values(propsRegistry)
         .find((props: MateriaProps) => props.name === propsName)
