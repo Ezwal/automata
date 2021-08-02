@@ -19,7 +19,7 @@ const paintData = (data: Uint8ClampedArray) => (offset: World.Idx, [red, green, 
 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
 const paintOffsetRgb = paintData(imageData.data)
 
-function paintPixels(changedId) {
+function paintPixels(changedId: Array<World.Idx>) {
     for (const pixelOffset of changedId) {
         const colorFunc = propsById(World.at(pixelOffset)).color
         paintOffsetRgb(pixelOffset * 4, colorFunc())

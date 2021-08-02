@@ -1,4 +1,4 @@
-import { at, swap, up, down, left, right, spawn, Idx } from './world'
+import { at, swap, up, down, left, right, spawnByName, Idx } from './world'
 import { propsById, propsByName, MateriaProps, State } from './properties'
 import { scramble } from './util'
 
@@ -7,8 +7,8 @@ type Interactions = { [subject: string]: { [target: string]: Interaction }}
 
 const scrambleLeftRight = (i: Idx): Array<Idx> => scramble(left(i), right(i))
 
-const lavaQuench = (water: Idx, lava: Idx): Array<Idx> => [spawn(water, 4), spawn(lava, 1)]
-const glassification = (sand: Idx): Array<Idx> => [spawn(sand, 6)]
+const lavaQuench = (water: Idx, lava: Idx): Array<Idx> => [spawnByName(water, 'vapor'), spawnByName(lava, 'ground')]
+const glassification = (sand: Idx): Array<Idx> => [spawnByName(sand, 'glass')]
 
 const interactions: Interactions = {
     water: {
