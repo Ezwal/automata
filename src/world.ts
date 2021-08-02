@@ -1,5 +1,5 @@
 import { simulate } from './physics'
-import { materia } from './properties'
+import { propsByName } from './properties'
 
 export type Idx = number
 export type World = number[]
@@ -39,7 +39,7 @@ export const stopPainting = (): void => {
 }
 
 export function spawnByName(idx: Idx, materiaName: string) {
-    return spawn(idx, materia[materiaName])
+    return spawn(idx, propsByName(materiaName).id)
 }
 
 export function spawn(idx: Idx, materia: number) {

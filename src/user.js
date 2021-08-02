@@ -1,13 +1,10 @@
 import { paint, stopPainting } from './world'
-import { propsList, propsById } from './properties'
+import { propsRegistry } from './properties'
 
 const canvas = document.getElementById('mainCanvas')
 
-const materiaKeyCode = Object.keys(propsList)
-                             .reduce((keyToMateria, el) => ({
-                                 [propsById(el).key]: Number(el),
-                                 ...keyToMateria
-                             }), {})
+const materiaKeyCode = Object.values(propsRegistry)
+      .reduce((acc, el) => ({[el.key]: el.id, ...acc}), {})
 
 function handleClick() {
     let painting = undefined
