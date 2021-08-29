@@ -32,6 +32,34 @@ const interact = (subject: string, target: string): Interaction => {
     }
 }
 
+function gravity(center: Idx): Array<Idx> {
+    return []
+}
+
+type Snapshot = {nw: MateriaProps, n: MateriaProps, ne: MateriaProps,
+                 w: MateriaProps, c: MateriaProps, e: MateriaProps,
+                 sw: MateriaProps, s: MateriaProps, se: MateriaProps}
+function takeSnapshot(center: Idx): Snapshot {
+    const [nw, n, ne, w, c, e, sw, s, se] = [left(up(center)), up(center), right(up(center)),
+                                             left(center), center, right(center),
+                                             left(down(center)), down(center), right(down(center))]
+                                                .map(el => propsById(at(el)))
+    return {nw, n, ne, w, c, e, sw, s, se}
+}
+
+function applySnapshot(center: Idx, snap: Snapshot): void {
+    // apply snap
+}
+
+function sim(center: Idx): Array<Idx> {
+    const centerMateria = propsById(at(center))
+    const snapshot = takeSnapshot(center)
+    // // here if attributes is missing then just dont do anything
+    // reaction(temperature(movement(snapshot)))
+    // return changed idx
+    return []
+}
+
 function stateSim(center: Idx, centerMateria: MateriaProps, potentials: Array<Idx>, isFalling: boolean): Array<Idx> {
     for (let potential of potentials) {
         const trajectoryMateria = propsById(at(potential))
