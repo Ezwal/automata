@@ -1,4 +1,4 @@
-import { simulate } from './physics'
+import { sim } from './physics'
 import { propsByName } from './properties'
 
 export type Idx = number
@@ -63,7 +63,7 @@ export function tick(): Array<Idx> {
     let currentChange: Array<Idx> = []
     for (let i of lastTouched) {
         if (!currentChange.includes(i)) {
-            const touched = simulate(i)
+            const touched = sim(i)
             currentChange = currentChange.concat(touched)
         }
     }

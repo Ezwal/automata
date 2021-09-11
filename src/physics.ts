@@ -1,4 +1,4 @@
-import { at, swap, up, down, left, right, spawnByName, Idx } from './world'
+import { at, swap, up, down, left, right, spawn, spawnByName, Idx } from './world'
 import { propsById, propsByName, MateriaProps, State } from './properties'
 import { scramble } from './util'
 
@@ -32,68 +32,35 @@ const interact = (subject: string, target: string): Interaction => {
     }
 }
 
-function gravity(center: Idx): Array<Idx> {
-    return []
-}
-
-type Snapshot = {nw: MateriaProps, n: MateriaProps, ne: MateriaProps,
-                 w: MateriaProps, c: MateriaProps, e: MateriaProps,
-                 sw: MateriaProps, s: MateriaProps, se: MateriaProps}
-function takeSnapshot(center: Idx): Snapshot {
-    const [nw, n, ne, w, c, e, sw, s, se] = [left(up(center)), up(center), right(up(center)),
-                                             left(center), center, right(center),
-                                             left(down(center)), down(center), right(down(center))]
-                                                .map(el => propsById(at(el)))
-    return {nw, n, ne, w, c, e, sw, s, se}
-}
-
-function applySnapshot(center: Idx, snap: Snapshot): void {
-    // apply snap
-}
-
-function sim(center: Idx): Array<Idx> {
+const airDensity = propsByName('air').density
+const isGravityAffected = (materia: MateriaProps) => materia.name === 'sand' ||
+    materia.state === State.Liquid || materia.state === State.Gas
+function gravity(center: Idx) {
     const centerMateria = propsById(at(center))
-    const snapshot = takeSnapshot(center)
-    // // here if attributes is missing then just dont do anything
-    // reaction(temperature(movement(snapshot)))
-    // return changed idx
-    return []
-}
+    const falling = centerMateria.density > airDensity ? true : false
+    const trajectory = falling ? down : up
+    if (!isGravityAffected(centerMateria)) {
+        return []
+    }
+    const target = trajectory(center)
+    const potentials = [target, ...scrambleLeftRight(target)]
+                           .concat(centerMateria.name !== 'sand' ? scrambleLeftRight(center) : [])
 
-function stateSim(center: Idx, centerMateria: MateriaProps, potentials: Array<Idx>, isFalling: boolean): Array<Idx> {
-    for (let potential of potentials) {
+    for (const potential of potentials) {
         const trajectoryMateria = propsById(at(potential))
-        if (trajectoryMateria) {
-            const potentialReaction = interact(centerMateria.name, trajectoryMateria.name)
-            if (potentialReaction) {
-                return potentialReaction(center, potential)
-            }
-            if (isFalling
-                ? trajectoryMateria.density < centerMateria.density
-                : trajectoryMateria.density > centerMateria.density) {
-                return swap(center, potential)
-            }
+        if (trajectoryMateria && (falling
+            ? trajectoryMateria.density < centerMateria.density
+            : trajectoryMateria.density > centerMateria.density)) {
+            return swap(center, potential)
         }
     }
     return []
 }
 
-const airDensity = propsByName('air').density
-export function simulate(center: Idx): Array<Idx> {
+export function sim(center: Idx): Array<Idx> {
     const centerMateria = propsById(at(center))
-    const falling = centerMateria.density > airDensity ? true : false
-    const trajectory = falling ? down : up
     if (centerMateria.name === 'air') {
         return []
     }
-
-    const target = trajectory(center)
-    if (centerMateria.state === State.Liquid || centerMateria.state === State.Gas) {
-        return stateSim(center, centerMateria, [target, ...scrambleLeftRight(target),
-                                    ...scrambleLeftRight(center)], falling)
-    }
-    if (centerMateria.name === 'sand') {
-        return stateSim(center, centerMateria, [target, ...scrambleLeftRight(target)], falling)
-    }
-    return []
+    return gravity(center)
 }
