@@ -38,20 +38,22 @@ const water = {
     density: 40,
     state: State.Liquid,
     color: () => [0, randBetween(0, 60), randBetween(200, 255)],
-    key: 'w',
+    key: 'w'
 }
 const sand = {
     id: 3,
     name: 'sand',
     density: 50,
-    state: State.Solid,
+    state: State.Liquid,
     color: () => [randBetween(200, 244), randBetween(200, 217), 14],
     key: 's',
 }
 const vapor = {
     id: 4,
     name: 'vapor',
-    density: 0, state: State.Gas, color: () => [19, 199, 244],
+    density: 0,
+    state: State.Gas,
+    color: () => [19, 199, 244],
     key: 'v',
 }
 const lava = {
@@ -60,7 +62,7 @@ const lava = {
     density: 60,
     state: State.Liquid,
     color: () => [181, 3, 3],
-    key: 'l'
+    key: 'l',
 }
 const glass = {
     id: 6,
@@ -68,9 +70,21 @@ const glass = {
     density: 45,
     state: State.Solid,
     color: () => [53, 0, 88],
-    key: 'g'
+    key: 'g',
 }
 
+const phases = {
+    [water.id]: {
+        [State.Solid]: [ground.id],
+        [State.Gas]: [vapor.id],
+    },
+    [sand.id]: {
+        [State.Solid]: [glass.id],
+    },
+    [vapor.id]: {
+        [State.Liquid]: [water.id],
+    }
+}
 export const propsRegistry = [air, ground, water, sand, vapor, lava, glass]
                                  .reduce((reg, el) => ({
                                      ...reg,
