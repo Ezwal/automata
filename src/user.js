@@ -2,9 +2,15 @@ import { paint, stopPainting } from './world'
 import { propsRegistry } from './properties'
 
 const canvas = document.getElementById('mainCanvas')
+const infos = document.getElementById('infos')
 
 const materiaKeyCode = Object.values(propsRegistry)
-      .reduce((acc, el) => ({[el.key]: el.id, ...acc}), {})
+      .reduce((acc, el) => ({[el.key]: el, ...acc}), {})
+
+function displayPaintInfo(materia) {
+    console.debug('Painting with', materia.name)
+    infos.innerText = materia.name
+}
 
 function handleClick() {
     let painting = undefined
@@ -31,7 +37,8 @@ function handleClick() {
 
     document.addEventListener('keydown', e => {
         if (materiaKeyCode[e.key]) {
-            currentPaintingMateria = materiaKeyCode[e.key]
+            currentPaintingMateria = materiaKeyCode[e.key].id
+            displayPaintInfo(materiaKeyCode[e.key])
         }
     })
 }
