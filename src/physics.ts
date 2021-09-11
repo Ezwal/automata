@@ -7,34 +7,10 @@ type Interactions = { [subject: string]: { [target: string]: Interaction }}
 
 const scrambleLeftRight = (i: Idx): Array<Idx> => scramble(left(i), right(i))
 
-const lavaQuench = (water: Idx, lava: Idx): Array<Idx> => [spawnByName(water, 'vapor'), spawnByName(lava, 'ground')]
-const glassification = (sand: Idx): Array<Idx> => [spawnByName(sand, 'glass')]
-
-const interactions: Interactions = {
-    water: {
-        lava: (water: Idx, lava: Idx): Array<Idx> => lavaQuench(lava, water),
-    },
-    lava: {
-        water: (lava: Idx, water: Idx): Array<Idx> => lavaQuench(lava, water),
-        sand: (_: Idx, sand: Idx): Array<Idx> => glassification(sand),
-    },
-    sand: {
-        lava: (sand: Idx, _: Idx): Array<Idx> => glassification(sand)
-    }
-}
-const interact = (subject: string, target: string): Interaction => {
-    const subjectInteractions = interactions[subject]
-    if (subjectInteractions) {
-        const targetSubjectInteractions = subjectInteractions[target]
-        if (targetSubjectInteractions) {
-            return targetSubjectInteractions
-        }
-    }
-}
-
 const airDensity = propsByName('air').density
-const isGravityAffected = (materia: MateriaProps) => materia.name === 'sand' ||
-    materia.state === State.Liquid || materia.state === State.Gas
+
+const isGravityAffected = (materia: MateriaProps) => materia.state === State.Liquid || materia.state === State.Gas
+
 function gravity(center: Idx) {
     const centerMateria = propsById(at(center))
     const falling = centerMateria.density > airDensity ? true : false
@@ -54,6 +30,11 @@ function gravity(center: Idx) {
             return swap(center, potential)
         }
     }
+    return []
+}
+
+function temperature(center: Idx) {
+    const centerMateria = propsById(at(center))
     return []
 }
 
