@@ -37,7 +37,15 @@ function main() {
     handleClick()
     init(canvas.width, canvas.height)
     // @ts-ignore
-    createjs.Ticker.addEventListener('tick', loop)
+    createjs.Ticker.addEventListener('tick', () => {
+        try {
+            loop()
+        } catch (error) {
+            // @ts-ignore
+            createjs.Ticker.removeAllEventListeners()
+            throw error
+        }
+    })
     // @ts-ignore
     createjs.Ticker.framerate = 30
 }
