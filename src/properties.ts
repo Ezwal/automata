@@ -83,17 +83,17 @@ const glass = {
 
 export const phases = {
     [water.id]: {
-        [State.Solid]: [ground.id], // TODO replace this with ice
-        [State.Gas]: [vapor.id],
+        [State.Solid]: ground.id, // TODO replace this with ice
+        [State.Gas]: vapor.id,
     },
     [lava.id]: {
-        [State.Solid]: [ground.id],
+        [State.Solid]: ground.id,
     },
     [sand.id]: {
-        [State.Solid]: [glass.id],
+        [State.Solid]: glass.id,
     },
     [vapor.id]: {
-        [State.Liquid]: [water.id],
+        [State.Liquid]: water.id,
     }
 }
 
