@@ -1,6 +1,7 @@
 import handleClick from './user'
 import { propsById } from './properties'
-import * as World from './world'
+import { init, Idx, at } from './world'
+import { tick } from './time'
 
 const canvas = <HTMLCanvasElement> document.getElementById('mainCanvas')
 const ctx = canvas.getContext('2d')
@@ -11,7 +12,7 @@ ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx.createImageData(canvas.width, canvas.height)
 
 const dataOffset = (w: number, h: number): number => ((canvas.width * w) + h) * 4
-const paintData = (data: Uint8ClampedArray) => (offset: World.Idx, [red, green, blue]: Array<number>) => {
+const paintData = (data: Uint8ClampedArray) => (offset: Idx, [red, green, blue]: Array<number>) => {
     data[offset] = red
     data[offset+1] = green
     data[offset+2] = blue
@@ -19,22 +20,22 @@ const paintData = (data: Uint8ClampedArray) => (offset: World.Idx, [red, green, 
 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
 const paintOffsetRgb = paintData(imageData.data)
 
-function paintPixels(changedId: Array<World.Idx>) {
+function paintPixels(changedId: Array<Idx>) {
     for (const pixelOffset of changedId) {
-        const colorFunc = propsById(World.at(pixelOffset)).color
+        const colorFunc = propsById(at(pixelOffset)).color
         paintOffsetRgb(pixelOffset * 4, colorFunc())
     }
     ctx.putImageData(imageData, 0, 0)
 }
 
 function loop() {
-    const changedId = World.tick()
+    const changedId = tick()
     paintPixels(changedId)
 }
 
 function main() {
     handleClick()
-    World.init(canvas.width, canvas.height)
+    init(canvas.width, canvas.height)
     // @ts-ignore
     createjs.Ticker.addEventListener('tick', loop)
     // @ts-ignore

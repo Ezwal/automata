@@ -27,22 +27,11 @@ export const up = (id: Idx): Idx => id - width
 export const right = (id: Idx): Idx => id % (width - 1) !== 0 ? id + 1 : -1
 export const left = (id: Idx): Idx => id % width !== 0 ? id - 1 : -1
 
-let paintingIndex: Idx
-let paintingMateria: number
-export const paint = (x: number, y: number, materia: number): void => {
-    const offset = x + y * width
-    paintingIndex = offset
-    paintingMateria = materia
-}
-export const stopPainting = (): void => {
-    paintingIndex = undefined
-}
-
 export function spawnByName(idx: Idx, materiaName: string) {
     return spawn(idx, propsByName(materiaName).id)
 }
 
-export function spawn(idx: Idx, materia: number) {
+export function spawn(idx: Idx, materia: number): Idx | undefined {
     if (idx >= 0 && idx < world.length) {
         world[idx] = materia
         return idx
@@ -58,31 +47,23 @@ export function swap(idA: Idx, idB: Idx): Array<Idx> {
 
 export const get = (): World => world
 
-let tickNb = 0
-export function tick(): Array<Idx> {
-    let currentChange: Array<Idx> = []
-    for (let i of lastTouched) {
-        if (!currentChange.includes(i)) {
-            const touched = sim(i)
-            currentChange = currentChange.concat(touched)
-        }
-    }
-    if (tickNb < 100 && tickNb > 0) {
-        currentChange.push(spawnByName(90, 'water'),
-                           spawnByName(78, 'sand'))
-    }
+let paintingIndex: Idx
+let paintingMateria: number
+
+export const paint = (x: number, y: number, materia: number): void => {
+    const offset = x + y * width
+    paintingIndex = offset
+    paintingMateria = materia
+}
+export const stopPainting = (): void => {
+    paintingIndex = undefined
+}
+
+export const applyPainting = (): Idx | undefined => {
     if (paintingIndex) {
         const changed = spawn(paintingIndex, paintingMateria)
         if (changed) {
-            currentChange.push(changed)
+            return changed
         }
     }
-
-    tickNb += 1
-    lastTouched = currentChange
-    if (currentChange.length > 0) {
-        console.debug('updated idx :', currentChange)
-    }
-    return currentChange
 }
-
