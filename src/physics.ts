@@ -1,5 +1,5 @@
-import { at, swap, up, down, left, right, spawn, spawnByName, Idx } from './world'
-import { propsById, propsByName, MateriaProps, State } from './properties'
+import { at, swap, up, down, left, right, spawn, spawnByName, Idx} from './world'
+import { propsById, propsByName, phases, MateriaProps, State } from './properties'
 import { scramble } from './util'
 
 type Interaction = (subject: Idx, target: Idx) => Array<Idx>
@@ -33,8 +33,29 @@ function gravity(center: Idx) {
     return []
 }
 
+const phasedMateria = Object.keys(phases).map(id => parseInt(id))
+const isAffectedByTemperature = (materia: MateriaProps) => phasedMateria.includes(materia.id)
 function temperature(center: Idx) {
     const centerMateria = propsById(at(center))
+    if (!isAffectedByTemperature(centerMateria)) {
+        return []
+    }
+
+    const potentials = [up(center), down(center), right(center), left(center)]
+    for (const potential of potentials) {
+        const potentialMateria = propsById(at(potential))
+        if (potentialMateria && isAffectedByTemperature(potentialMateria)
+            && potentialMateria.temperature !== centerMateria.temperature) {
+            const tempDifferential = centerMateria.temperature - potentialMateria.temperature
+            const newState = tempDifferential > 0 ? 1 : - 1
+            const newCenterMateria = phases[centerMateria.id][centerMateria.state + newState]
+            const newPotentialMateria = phases[potentialMateria.id][potentialMateria.state - newState]
+            if (newCenterMateria && newPotentialMateria) {
+                return [spawn(center, newCenterMateria.id),
+                        spawn(potential, newPotentialMateria.id)]
+            }
+        }
+    }
     return []
 }
 
@@ -43,5 +64,5 @@ export function sim(center: Idx): Array<Idx> {
     if (centerMateria.name === 'air') {
         return []
     }
-    return gravity(center)
+    return gravity(center).concat(temperature(center))
 }
