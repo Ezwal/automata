@@ -80,10 +80,19 @@ const glass = {
     color: () => [53, 0, 88],
     key: 'g',
 }
+const ice = {
+    id: 7,
+    name: 'ice',
+    density: 50,
+    temperature: 0,
+    state: State.Solid,
+    color: () => [0, randBetween(0, 60), randBetween(200, 255)],
+    key: 'i',
+}
 
 export const phases = {
     [water.id]: {
-        [State.Solid]: ground.id, // TODO replace this with ice
+        [State.Solid]: ice.id,
         [State.Gas]: vapor.id,
     },
     [lava.id]: {
@@ -94,10 +103,14 @@ export const phases = {
     },
     [vapor.id]: {
         [State.Liquid]: water.id,
+    },
+    [ice.id]: {
+        [State.Liquid]: water.id,
+        [State.Gas]: vapor.id,
     }
 }
 
-export const propsRegistry = [air, ground, water, sand, vapor, lava, glass]
+export const propsRegistry = [air, ground, water, sand, vapor, lava, glass, ice]
                                  .reduce((reg, el) => ({
                                      ...reg,
                                      [el.id]: el}), {})
