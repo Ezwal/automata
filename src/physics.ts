@@ -51,8 +51,8 @@ function temperature(center: Idx) {
             const newCenterMateria = phases[centerMateria.id][centerMateria.state + newState]
             const newPotentialMateria = phases[potentialMateria.id][potentialMateria.state - newState]
             if (newCenterMateria && newPotentialMateria) {
-                return [spawn(center, newCenterMateria.id),
-                        spawn(potential, newPotentialMateria.id)]
+                return [spawn(center, newCenterMateria),
+                        spawn(potential, newPotentialMateria)]
             }
         }
     }
