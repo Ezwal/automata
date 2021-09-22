@@ -89,6 +89,15 @@ const ice = {
     color: () => [0, randBetween(0, 60), randBetween(200, 255)],
     key: 'i',
 }
+const dirt = {
+    id: 8,
+    name: 'dirt',
+    density: 55,
+    temperature: 20,
+    state: State.Solid,
+    color: () => [50, 50, 50],
+    key: 'd',
+}
 
 export const phases = {
     [water.id]: {
@@ -110,7 +119,7 @@ export const phases = {
     }
 }
 
-export const propsRegistry = [air, ground, water, sand, vapor, lava, glass, ice]
+export const propsRegistry = [air, ground, water, sand, vapor, lava, glass, ice, dirt]
                                  .reduce((reg, el) => ({
                                      ...reg,
                                      [el.id]: el}), {})
