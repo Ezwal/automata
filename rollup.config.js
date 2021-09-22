@@ -13,7 +13,7 @@ export default {
         include: 'src/**/*'
     },
     plugins: [
-        typescript({'lib': ['es2020', 'dom'], target: 'es2020'}),
+        typescript({'lib': ['es2020'], target: 'es2020'}),
         serve({
             open: true,
             verbose: true,
