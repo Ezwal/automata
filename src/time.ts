@@ -1,4 +1,4 @@
-import { Idx, spawn, spawnByName, applyPainting } from './world'
+import { Idx, spawn, spawnByName, applyPainting, refreshLiquid } from './world'
 import { sim } from './physics';
 
 let lastTouched: Set<Idx> = new Set()

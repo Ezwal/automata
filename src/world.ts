@@ -1,4 +1,3 @@
-import { sim } from './physics'
 import { propsByName } from './properties'
 
 export type Idx = number
@@ -66,4 +65,15 @@ export const applyPainting = (): Idx | undefined => {
             return changed
         }
     }
+}
+
+const waterId = propsByName('water').id
+export const refreshLiquid = (): Array<Idx> => {
+    const toRefresh = []
+    for (let i = 0; i < width * height; i += 1) {
+        if (at(i) == waterId) {
+            toRefresh.push(i)
+        }
+    }
+    return toRefresh
 }
