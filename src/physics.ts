@@ -11,12 +11,12 @@ const airDensity = propsByName('air').density
 
 const isGravityAffected = (materia: MateriaProps) => materia.state === State.Liquid || materia.state === State.Gas
 
-function gravity(center: Idx) {
+function gravity(center: Idx): Set<Idx> {
     const centerMateria = propsById(at(center))
     const falling = centerMateria.density > airDensity ? true : false
     const trajectory = falling ? down : up
     if (!isGravityAffected(centerMateria)) {
-        return []
+        return new Set()
     }
     const target = trajectory(center)
     const potentials = [target, ...scrambleLeftRight(target)]
@@ -27,18 +27,18 @@ function gravity(center: Idx) {
         if (trajectoryMateria && (falling
             ? trajectoryMateria.density < centerMateria.density
             : trajectoryMateria.density > centerMateria.density)) {
-            return swap(center, potential)
+            return new Set(swap(center, potential))
         }
     }
-    return []
+    return new Set()
 }
 
 const phasedMateria = Object.keys(phases).map(id => parseInt(id))
-const isAffectedByTemperature = (materia: MateriaProps) => phasedMateria.includes(materia.id)
-function temperature(center: Idx) {
+const isAffectedByTemperature = (materia: MateriaProps): boolean => phasedMateria.includes(materia.id)
+function temperature(center: Idx): Set<Idx> {
     const centerMateria = propsById(at(center))
     if (!isAffectedByTemperature(centerMateria)) {
-        return []
+        return new Set()
     }
 
     const potentials = [up(center), down(center), right(center), left(center)]
@@ -51,18 +51,18 @@ function temperature(center: Idx) {
             const newCenterMateria = phases[centerMateria.id][centerMateria.state + newState]
             const newPotentialMateria = phases[potentialMateria.id][potentialMateria.state - newState]
             if (newCenterMateria && newPotentialMateria) {
-                return [spawn(center, newCenterMateria),
-                        spawn(potential, newPotentialMateria)]
+                return new Set([spawn(center, newCenterMateria),
+                        spawn(potential, newPotentialMateria)])
             }
         }
     }
-    return []
+    return new Set()
 }
 
-export function sim(center: Idx): Array<Idx> {
+export function sim(center: Idx): Set<Idx> {
     const centerMateria = propsById(at(center))
     if (centerMateria.name === 'air') {
-        return []
+        return new Set()
     }
-    return gravity(center).concat(temperature(center))
+    return new Set([...gravity(center), ...temperature(center)])
 }
