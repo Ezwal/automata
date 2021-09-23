@@ -1,5 +1,5 @@
 {
-  "name": "pixel-mage",
+  "name": "automata",
   "version": "1.0.0",
   "description": "",
   "main": "",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ezwal/pixel-magic.git"
+    "url": "git+https://github.com/ezwal/automata.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ezwal/pixel-magic/issues"
+    "url": "https://github.com/ezwal/automata/issues"
   },
-  "homepage": "https://github.com/ezwal/pixel-magic#readme",
+  "homepage": "https://github.com/ezwal/automata#readme",
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.1",
     "rollup": "^2.48.0",

@@ -1,4 +1,4 @@
-# Pixel-magic
+# Automata
 
 Simple physic-based cellular automata system.
 Featuring canvas and ts/js.
