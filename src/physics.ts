@@ -2,8 +2,6 @@ import { at, swap, up, down, left, right, spawn, Idx} from './world'
 import { propsById, propsByName, phases, MateriaProps, State } from './properties'
 import { scramble } from './util'
 
-type Interaction = (subject: Idx, target: Idx) => Array<Idx>
-
 const scrambleLeftRight = (i: Idx): Array<Idx> => scramble(left(i), right(i))
 
 const airDensity = propsByName('air').density
