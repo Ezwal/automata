@@ -11,7 +11,6 @@ ctx.fillStyle = 'white'
 ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx.createImageData(canvas.width, canvas.height)
 
-const dataOffset = (w: number, h: number): number => ((canvas.width * w) + h) * 4
 const paintData = (data: Uint8ClampedArray) => (offset: Idx, [red, green, blue]: Array<number>) => {
     data[offset] = red
     data[offset+1] = green
@@ -20,7 +19,7 @@ const paintData = (data: Uint8ClampedArray) => (offset: Idx, [red, green, blue]:
 const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
 const paintOffsetRgb = paintData(imageData.data)
 
-function paintPixels(changedId: Array<Idx>) {
+function paintPixels(changedId: Set<Idx>) {
     for (const pixelOffset of changedId) {
         const colorFunc = propsById(at(pixelOffset)).color
         paintOffsetRgb(pixelOffset * 4, colorFunc())
