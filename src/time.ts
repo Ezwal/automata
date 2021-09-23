@@ -12,6 +12,9 @@ export function tick(): Set<Idx> {
             touched.forEach(el => currentChange.add(el))
         }
     }
+    if (tickNb % 10 == 0) {
+        refreshLiquid().forEach(el => currentChange.add(el))
+    }
     if (tickNb < 100 && tickNb > 0) {
         currentChange.add(spawnByName(90, 'water'))
         currentChange.add(spawnByName(78, 'sand'))
