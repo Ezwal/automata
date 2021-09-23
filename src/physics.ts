@@ -6,7 +6,7 @@ const scrambleLeftRight = (i: Idx): Array<Idx> => scramble(left(i), right(i))
 
 const airDensity = propsByName('air').density
 
-const isGravityAffected = (materia: MateriaProps) => materia.state === State.Liquid || materia.state === State.Gas
+const isGravityAffected = (materia: MateriaProps) => materia.state === State.Liquid || materia.state === State.Gas || materia.name === 'sand'
 
 function gravity(center: Idx): Set<Idx> {
     const centerMateria = propsById(at(center))
@@ -21,9 +21,9 @@ function gravity(center: Idx): Set<Idx> {
 
     for (const potential of potentials) {
         const trajectoryMateria = propsById(at(potential))
-        if (trajectoryMateria && (falling
-            ? trajectoryMateria.density < centerMateria.density
-            : trajectoryMateria.density > centerMateria.density)) {
+        if (trajectoryMateria &&
+            (falling ? trajectoryMateria.density < centerMateria.density
+                : trajectoryMateria.density > centerMateria.density)) {
             return new Set(swap(center, potential))
         }
     }

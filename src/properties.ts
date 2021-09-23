@@ -49,7 +49,7 @@ const sand = {
     name: 'sand',
     density: 50,
     temperature: 20,
-    state: State.Liquid,
+    state: State.Solid,
     color: () => [randBetween(200, 244), randBetween(200, 217), 14],
     key: 's',
 }
@@ -108,7 +108,7 @@ export const phases = {
         [State.Solid]: ground.id,
     },
     [sand.id]: {
-        [State.Solid]: glass.id,
+        [State.Liquid]: glass.id,
     },
     [vapor.id]: {
         [State.Liquid]: water.id,
